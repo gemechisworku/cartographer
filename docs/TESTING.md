@@ -78,6 +78,9 @@ uv run pytest -v
   **dag_config_parser** — parse_dbt_schema_yml (models), parse_airflow_dag_python (task_id, >>), analyze_dag_config dispatch.
 - **Knowledge graph** (`tests/unit/graph/test_knowledge_graph.py`):  
   add_module_node, add_import_edge, add_function_node, add_calls_edge; add_dataset_node, add_transformation_node, add_produces/consumes; serialize, write_module_graph_json, write_lineage_graph_json, load roundtrip.
+- **Agents** (`tests/unit/agents/`):  
+  **Surveyor** — analyze_module, extract_git_velocity, run_surveyor (module graph populated).  
+  **Hydrologist** — run_hydrologist (SQL/dbt YAML), blast_radius, find_sources, find_sinks.
 
 ---
 

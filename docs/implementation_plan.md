@@ -51,32 +51,32 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.5.1 | **surveyor.py:** `analyze_module(path)` using tree_sitter_analyzer → ModuleNode, FunctionNode, IMPORTS ([specs/agents/surveyor.md](../specs/agents/surveyor.md)). | src/agents/surveyor.py | ⬜ |
-| 1.5.2 | **surveyor.py:** `extract_git_velocity(path, days=30)` — git log --follow, change frequency per file. | Same | ⬜ |
-| 1.5.3 | **surveyor.py:** Build module import graph (NetworkX DiGraph); PageRank; strongly connected components (circular deps). | Same | ⬜ |
-| 1.5.4 | **surveyor.py:** Dead-code candidates (exported symbols with no references). | Same | ⬜ |
+| 1.5.1 | **surveyor.py:** `analyze_module(path)` using tree_sitter_analyzer → ModuleNode, FunctionNode, IMPORTS ([specs/agents/surveyor.md](../specs/agents/surveyor.md)). | src/agents/surveyor.py | ✅ |
+| 1.5.2 | **surveyor.py:** `extract_git_velocity(path, days=30)` — git log --follow, change frequency per file. | Same | ✅ |
+| 1.5.3 | **surveyor.py:** Build module import graph (NetworkX DiGraph); PageRank; strongly connected components (circular deps). | Same | ✅ |
+| 1.5.4 | **surveyor.py:** Dead-code candidates (exported symbols with no references). | Same | ✅ |
 
 ### 1.6 Hydrologist agent
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.6.1 | **hydrologist.py:** Python data-flow (tree_sitter): pandas read/write, SQLAlchemy, PySpark; extract dataset names; log dynamic refs ([specs/agents/hydrologist.md](../specs/agents/hydrologist.md)). | src/agents/hydrologist.py | ⬜ |
-| 1.6.2 | **hydrologist.py:** Merge sql_lineage + dag_config_parser into DataLineageGraph (DatasetNode, TransformationNode, PRODUCES, CONSUMES). | Same | ⬜ |
-| 1.6.3 | **hydrologist.py:** `blast_radius(node)`, `find_sources()`, `find_sinks()`. | Same | ⬜ |
+| 1.6.1 | **hydrologist.py:** Python data-flow (tree_sitter): pandas read/write, SQLAlchemy, PySpark; extract dataset names; log dynamic refs ([specs/agents/hydrologist.md](../specs/agents/hydrologist.md)). | src/agents/hydrologist.py | ✅ |
+| 1.6.2 | **hydrologist.py:** Merge sql_lineage + dag_config_parser into DataLineageGraph (DatasetNode, TransformationNode, PRODUCES, CONSUMES). | Same | ✅ |
+| 1.6.3 | **hydrologist.py:** `blast_radius(node)`, `find_sources()`, `find_sinks()`. | Same | ✅ |
 
 ### 1.7 Orchestrator and CLI (interim scope)
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.7.1 | **orchestrator.py:** Wire Surveyor → Hydrologist; accept repo path; build and populate knowledge graph; write .cartography/module_graph.json and .cartography/lineage_graph.json. | src/orchestrator.py | ⬜ |
-| 1.7.2 | **cli.py:** Entry point; `analyze` subcommand (repo path: local or GitHub URL); call orchestrator; create .cartography/ under repo. | src/cli.py | ⬜ |
+| 1.7.1 | **orchestrator.py:** Wire Surveyor → Hydrologist; accept repo path; build and populate knowledge graph; write .cartography/module_graph.json and .cartography/lineage_graph.json. | src/orchestrator.py | ✅ |
+| 1.7.2 | **cli.py:** Entry point; `analyze` subcommand (repo path: local or GitHub URL); call orchestrator; create .cartography/ under repo. | src/cli.py | ✅ |
 
 ### 1.8 Documentation and artifacts (interim)
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.8.1 | **README.md:** Install (uv), run `analyze` against local path or GitHub URL; list required artifacts. | README.md | ⬜ |
-| 1.8.2 | Run analysis on **at least 1 target codebase** (e.g. dbt jaffle_shop or Airflow examples); produce .cartography/module_graph.json and .cartography/lineage_graph.json (lineage partial OK; min SQL via sqlglot). | Cartography artifacts | ⬜ |
+| 1.8.1 | **README.md:** Install (uv), run `analyze` against local path or GitHub URL; list required artifacts. | README.md | ✅ |
+| 1.8.2 | Run analysis on **at least 1 target codebase** (e.g. dbt jaffle_shop or Airflow examples); produce .cartography/module_graph.json and .cartography/lineage_graph.json (lineage partial OK; min SQL via sqlglot). | Cartography artifacts | ✅ |
 
 ### 1.9 Interim PDF report
 

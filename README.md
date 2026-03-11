@@ -10,11 +10,17 @@ uv sync
 
 ## Run analysis
 
-*(Interim: `analyze` subcommand; see implementation plan.)*
+Analyze a local directory or a GitHub repo URL (cloned to a temp dir). Writes `.cartography/` under the repo (or `-o` path).
 
 ```bash
-uv run python -m cli analyze <repo-path-or-github-url>
+uv run cartographer analyze <path-or-github-url>
+uv run cartographer analyze .                    # current directory
+uv run cartographer analyze https://github.com/dbt-labs/jaffle_shop
 ```
+
+**Options:** `-o DIR` (output dir), `--days N` (git velocity window), `--sql-dialect` (postgres|bigquery|snowflake|duckdb).
+
+**Artifacts (interim):** `.cartography/module_graph.json`, `.cartography/lineage_graph.json`.
 
 ## Run tests
 
