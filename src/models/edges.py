@@ -1,4 +1,7 @@
-"""Knowledge graph edge types per specs/data-model.md."""
+"""Pydantic edge types for the knowledge graph (EdgeType, EdgePayload).
+
+Used by the storage layer in src/graph/knowledge_graph.py. Per specs/data-model.md.
+"""
 
 from enum import Enum
 from typing import Any, Optional

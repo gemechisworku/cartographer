@@ -1,5 +1,7 @@
-"""Extract table-level dependencies from SQL using sqlglot.
+"""SQL dependency extraction via sqlglot.
 
+Parses SQL and extracts table-level dependencies from SELECT, FROM, JOIN, and WITH (CTE)
+for sources; INSERT/MERGE/CREATE/UPDATE for targets. Supports postgres, bigquery, snowflake, duckdb.
 Per specs/analyzers.md. Feeds DatasetNode, TransformationNode, CONSUMES, PRODUCES.
 """
 import logging
@@ -21,13 +23,27 @@ DIALECT_MAP = {
 
 
 def _tables_from_expression(expression: exp.Expression, dialect: Any = None) -> list[str]:
-    """Collect table names from FROM/JOIN/table in an expression."""
+    """Collect table names from FROM/JOIN and from WITH (CTE) clauses in an expression."""
     tables: list[str] = []
     d = dialect or "ansi"
+    # Main query and subqueries: all exp.Table nodes (FROM, JOIN)
     for table in expression.find_all(exp.Table):
         name = table.sql(dialect=d)
         if name:
             tables.append(name)
+    # Explicit WITH (CTE) handling: tables referenced inside each CTE definition
+    for cte_node in expression.find_all(exp.CTE):
+        # CTE body is typically a Subquery; collect tables from it
+        for table in cte_node.find_all(exp.Table):
+            name = table.sql(dialect=d)
+            if name:
+                tables.append(name)
+    for with_node in expression.find_all(exp.With):
+        for cte in with_node.expressions:
+            for table in cte.find_all(exp.Table):
+                name = table.sql(dialect=d)
+                if name:
+                    tables.append(name)
     return tables
 
 

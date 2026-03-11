@@ -1,4 +1,7 @@
-"""Knowledge graph node types per specs/data-model.md."""
+"""Pydantic node types for the knowledge graph (ModuleNode, DatasetNode, FunctionNode, TransformationNode).
+
+Used by the storage layer in src/graph/knowledge_graph.py. Per specs/data-model.md.
+"""
 
 from datetime import datetime
 from typing import Any, Literal, Optional

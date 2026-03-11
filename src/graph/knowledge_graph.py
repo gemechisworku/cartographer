@@ -1,6 +1,8 @@
-"""NetworkX wrapper for module graph and data lineage. Serializes to JSON.
+"""Knowledge graph storage layer: NetworkX wrapper bridging Pydantic schemas (src/models) to graphs.
 
-Per specs/data-model.md and pipeline. Used by Surveyor (module graph) and Hydrologist (lineage).
+Provides add_* methods for typed nodes/edges (ModuleNode, DatasetNode, etc.), serialize to JSON,
+deserialize from JSON (including from file via load_module_graph_json/load_lineage_graph_json).
+Used by Surveyor (module graph) and Hydrologist (lineage). Per specs/data-model.md.
 """
 import json
 import logging
@@ -120,3 +122,15 @@ class KnowledgeGraph:
     def load_lineage_graph_from_dict(self, data: dict[str, Any]) -> None:
         """Load lineage graph from a node_link_data dict."""
         self._lineage_graph = nx.node_link_graph(data)
+
+    def load_module_graph_json(self, path: str | Path) -> None:
+        """Deserialize module graph from a JSON file (round-trip with write_module_graph_json)."""
+        path = Path(path)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.load_module_graph_from_dict(data)
+
+    def load_lineage_graph_json(self, path: str | Path) -> None:
+        """Deserialize lineage graph from a JSON file (round-trip with write_lineage_graph_json)."""
+        path = Path(path)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        self.load_lineage_graph_from_dict(data)

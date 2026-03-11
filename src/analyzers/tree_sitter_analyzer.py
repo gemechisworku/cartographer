@@ -1,7 +1,4 @@
-"""Tree-sitter based AST parsing: LanguageRouter + structural extraction (imports, functions, classes).
-
-Per specs/analyzers.md. Used by Surveyor and Hydrologist (Python data-flow).
-"""
+"""Multi-language AST parsing with tree-sitter: loads grammars for Python, YAML, JavaScript/TypeScript; routes by file extension; extracts imports, function defs, class defs from AST (no regex). Used by Surveyor and Hydrologist. Per specs/analyzers.md."""
 import logging
 from pathlib import Path
 from typing import Any, Optional
@@ -179,6 +176,44 @@ def extract_python_functions_and_classes(
     return results
 
 
+def extract_js_imports(source: bytes, tree: Tree, file_path: str) -> list[tuple[str, str]]:
+    """Extract (importer_path, imported_module_specifier) for JavaScript/TypeScript from AST.
+    Handles ES6 import (import_statement with source) and require() call_expression.
+    """
+    results: list[tuple[str, str]] = []
+    root = tree.root_node
+    if root is None:
+        return results
+    importer = file_path.replace("\\", "/")
+
+    def walk(n: Node) -> None:
+        # ES6: import x from 'path' / import 'path' — node type is often "import_statement" with "source" (string)
+        if n.type in ("import_statement", "import_declaration"):
+            source_node = n.child_by_field_name("source")
+            if source_node:
+                spec = _get_text(source, source_node).strip().strip("'\"").strip()
+                if spec:
+                    results.append((importer, spec))
+            return
+        # require('path') — call_expression with function "require" and first arg string
+        if n.type == "call_expression":
+            fn = n.child_by_field_name("function")
+            if fn and _get_text(source, fn).strip() == "require":
+                args = n.child_by_field_name("arguments")
+                if args and args.child_count >= 1:
+                    first_arg = args.child(1)  # 0 is often "(", 1 is first argument
+                    if first_arg and first_arg.type == "string":
+                        spec = _get_text(source, first_arg).strip().strip("'\"").strip()
+                        if spec:
+                            results.append((importer, spec))
+            return
+        for child in n.children:
+            walk(child)
+
+    walk(root)
+    return results
+
+
 def analyze_module(
     repo_root: str | Path,
     file_path: str | Path,
@@ -204,14 +239,18 @@ def analyze_module(
             source_bytes = b""
 
     file_path_str = str(path).replace("\\", "/")
-    out: dict[str, Any] = {"imports": [], "functions": [], "classes": [], "complexity": None, "language": "python"}
+    ext = path.suffix.lower()
+    out: dict[str, Any] = {"imports": [], "functions": [], "classes": [], "complexity": None, "language": ext or "unknown"}
 
-    if path.suffix.lower() == ".py":
+    if ext == ".py":
+        out["language"] = "python"
         out["imports"] = extract_python_imports(source_bytes, tree, file_path_str)
         funcs_and_classes = extract_python_functions_and_classes(source_bytes, tree, file_path_str)
         out["functions"] = [x for x in funcs_and_classes if x.get("kind") == "function"]
         out["classes"] = [x for x in funcs_and_classes if x.get("kind") == "class"]
-        # Optional complexity: LOC
         out["complexity"] = {"lines": source_bytes.count(b"\n") + (1 if source_bytes else 0)}
+    elif ext in (".js", ".ts", ".tsx"):
+        out["imports"] = extract_js_imports(source_bytes, tree, file_path_str)
+        out["language"] = "javascript" if ext == ".js" else "typescript"
 
     return out

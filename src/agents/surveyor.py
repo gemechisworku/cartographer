@@ -1,4 +1,4 @@
-"""Surveyor agent: static structure analysis, module graph, PageRank, git velocity, dead-code candidates.
+"""Surveyor agent: builds module import graph (NetworkX DiGraph), runs PageRank and strongly connected components, analyzes git history for change velocity, and flags dead-code candidates (exported symbols with no import references).
 
 Per specs/agents/surveyor.md. Populates knowledge graph with ModuleNode, FunctionNode, IMPORTS.
 """
@@ -135,7 +135,7 @@ def run_surveyor(
     days_velocity: int = 30,
     file_extensions: Optional[set[str]] = None,
 ) -> None:
-    """Discover files, analyze each, attach git velocity, build module graph, run PageRank, detect SCCs and dead-code candidates."""
+    """Build module import graph (DiGraph), run PageRank, attach git velocity, detect SCCs and dead-code candidates."""
     repo_root = Path(repo_root)
     if file_extensions is None:
         file_extensions = {".py", ".sql", ".yml", ".yaml", ".js", ".ts", ".tsx"}

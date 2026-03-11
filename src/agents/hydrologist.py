@@ -1,6 +1,6 @@
-"""Hydrologist agent: data lineage DAG from SQL, dbt, Airflow/dbt config. blast_radius, find_sources, find_sinks.
+"""Hydrologist agent: merges data flow from SQL lineage (sqlglot) and DAG config (dbt schema.yml, Airflow DAG Python) into a single NetworkX lineage DiGraph. Provides blast_radius(node_id), find_sources(), find_sinks().
 
-Per specs/agents/hydrologist.md. Populates knowledge graph lineage_graph with DatasetNode, TransformationNode, PRODUCES, CONSUMES.
+Uses src.analyzers.sql_lineage and src.analyzers.dag_config_parser; merges into kg.lineage_graph. Per specs/agents/hydrologist.md.
 """
 import logging
 from pathlib import Path
@@ -50,7 +50,7 @@ def run_hydrologist(
     *,
     sql_dialect: str = "postgres",
 ) -> None:
-    """Run SQL lineage and DAG config analyzers; merge into kg.lineage_graph."""
+    """Run sql_lineage and dag_config_parser; merge into kg.lineage_graph (single DiGraph)."""
     repo_root = Path(repo_root)
     sql_files, yaml_files, dag_py_files = _collect_lineage_files(repo_root)
 

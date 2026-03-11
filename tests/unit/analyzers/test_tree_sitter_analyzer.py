@@ -4,6 +4,7 @@ import pytest
 
 from src.analyzers.tree_sitter_analyzer import (
     analyze_module,
+    extract_js_imports,
     get_language_for_extension,
     get_language_for_path,
     parse_file,
@@ -79,3 +80,31 @@ class TestAnalyzeModulePython:
         assert out["imports"] == []
         assert out["functions"] == []
         assert out["classes"] == []
+
+
+class TestAnalyzeModuleJavaScript:
+    """JS/TS import extraction (AST-based). Skips if tree_sitter_javascript not available."""
+
+    def test_js_import_extracted_via_analyze_module(self, tmp_path):
+        if get_language_for_extension(".js") is None:
+            pytest.skip("tree_sitter_javascript not available")
+        (tmp_path / "app.js").write_text("import foo from 'mymodule';\nconst x = require('other');\n")
+        out = analyze_module(tmp_path, "app.js")
+        assert "imports" in out
+        # At least one of ES6 import or require should be found
+        assert len(out["imports"]) >= 1
+        importer, spec = out["imports"][0]
+        assert "app.js" in importer or "app" in importer
+        assert "mymodule" in spec or "other" in spec
+
+    def test_extract_js_imports_es6_import(self, tmp_path):
+        if get_language_for_extension(".js") is None:
+            pytest.skip("tree_sitter_javascript not available")
+        from src.analyzers.tree_sitter_analyzer import parse_file
+        (tmp_path / "m.js").write_text("import something from './lib';\n")
+        tree = parse_file(tmp_path, "m.js")
+        assert tree is not None
+        source = (tmp_path / "m.js").read_bytes()
+        imports = extract_js_imports(source, tree, "m.js")
+        assert len(imports) >= 1
+        assert any("lib" in spec for _importer, spec in imports)

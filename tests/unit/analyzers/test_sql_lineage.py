@@ -20,6 +20,12 @@ class TestExtractTableDependencies:
         assert len(deps) == 1
         assert set(deps[0]["source_tables"]) >= {"a", "b"}
 
+    def test_with_cte(self):
+        sql = "WITH cte AS (SELECT * FROM base_table) SELECT * FROM cte"
+        deps = extract_table_dependencies(sql)
+        assert len(deps) >= 1
+        assert "base_table" in deps[0]["source_tables"]
+
     def test_insert_into(self):
         deps = extract_table_dependencies("INSERT INTO dest SELECT * FROM src")
         assert len(deps) == 1

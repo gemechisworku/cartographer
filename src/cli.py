@@ -1,4 +1,4 @@
-"""CLI entry point: analyze (repo path or GitHub URL), writes .cartography/."""
+"""CLI entry point. analyze subcommand accepts repo path (local or GitHub URL); delegates to orchestrator; outputs written to .cartography/ or -o path."""
 import argparse
 import logging
 import sys

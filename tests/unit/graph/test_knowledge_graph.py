@@ -81,3 +81,25 @@ class TestKnowledgeGraphSerialization:
         assert out_file.exists()
         loaded = json.loads(out_file.read_text())
         assert "nodes" in loaded
+
+    def test_load_module_graph_json_roundtrip(self, tmp_path):
+        kg = KnowledgeGraph()
+        kg.add_module_node(ModuleNode(path="a.py", language="python"))
+        kg.add_module_node(ModuleNode(path="b.py", language="python"))
+        kg.add_import_edge("a.py", "b.py")
+        out_file = tmp_path / "module_graph.json"
+        kg.write_module_graph_json(out_file)
+        kg2 = KnowledgeGraph()
+        kg2.load_module_graph_json(out_file)
+        assert kg2.module_graph.number_of_nodes() == 2
+        assert kg2.module_graph.has_edge("a.py", "b.py")
+
+    def test_load_lineage_graph_json_roundtrip(self, tmp_path):
+        kg = KnowledgeGraph()
+        kg.add_dataset_node(DatasetNode(name="t", storage_type="table"))
+        out_file = tmp_path / "lineage_graph.json"
+        kg.write_lineage_graph_json(out_file)
+        kg2 = KnowledgeGraph()
+        kg2.load_lineage_graph_json(out_file)
+        assert kg2.lineage_graph.number_of_nodes() == 1
+        assert list(kg2.lineage_graph.nodes)[0] == "t"

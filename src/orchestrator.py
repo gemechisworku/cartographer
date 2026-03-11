@@ -1,7 +1,4 @@
-"""Orchestrator: wire Surveyor -> Hydrologist, build knowledge graph, write .cartography/ artifacts.
-
-Interim: Surveyor + Hydrologist only; writes module_graph.json and lineage_graph.json.
-"""
+"""Pipeline: sequences Surveyor then Hydrologist in a single run; writes module_graph.json and lineage_graph.json to output directory (default repo/.cartography). CLI accepts repo path; orchestrator serializes results to output dir."""
 import logging
 import os
 import shutil
@@ -67,6 +64,7 @@ def run_analysis(
     out.mkdir(parents=True, exist_ok=True)
 
     kg = KnowledgeGraph()
+    # Sequence: Surveyor (module graph) then Hydrologist (lineage graph); then serialize.
     run_surveyor(repo_path, kg, days_velocity=days_velocity)
     run_hydrologist(repo_path, kg, sql_dialect=sql_dialect)
 
