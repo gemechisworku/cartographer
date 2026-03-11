@@ -21,16 +21,16 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.1.1 | Create `pyproject.toml` with uv, project name, and dependencies (tree-sitter, tree-sitter-* grammars, sqlglot, networkx, pydantic, etc.). | pyproject.toml | ⬜ |
-| 1.1.2 | Lock deps with `uv lock`. | uv.lock (or equivalent) | ⬜ |
-| 1.1.3 | Create `src/` layout: `src/models/`, `src/analyzers/`, `src/agents/`, `src/graph/`. Add `src/__init__.py` etc. as needed. | Directory structure | ⬜ |
+| 1.1.1 | Create `pyproject.toml` with uv, project name, and dependencies (tree-sitter, tree-sitter-* grammars, sqlglot, networkx, pydantic, etc.). | pyproject.toml | ✅ |
+| 1.1.2 | Lock deps with `uv lock`. | uv.lock (or equivalent) | ✅ |
+| 1.1.3 | Create `src/` layout: `src/models/`, `src/analyzers/`, `src/agents/`, `src/graph/`. Add `src/__init__.py` etc. as needed. | Directory structure | ✅ |
 
 ### 1.2 Data model (knowledge graph schema)
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.2.1 | Implement Pydantic models in `src/models/`: **ModuleNode**, **DatasetNode**, **FunctionNode**, **TransformationNode** (see [specs/data-model.md](../specs/data-model.md)). | src/models/*.py | ⬜ |
-| 1.2.2 | Implement edge types / graph types (IMPORTS, PRODUCES, CONSUMES, CALLS, CONFIGURES) as needed for serialization and graph APIs. | src/models/*.py | ⬜ |
+| 1.2.1 | Implement Pydantic models in `src/models/`: **ModuleNode**, **DatasetNode**, **FunctionNode**, **TransformationNode** (see [specs/data-model.md](../specs/data-model.md)). | src/models/*.py | ✅ |
+| 1.2.2 | Implement edge types / graph types (IMPORTS, PRODUCES, CONSUMES, CALLS, CONFIGURES) as needed for serialization and graph APIs. | src/models/*.py | ✅ |
 
 ### 1.3 Analyzers
 
