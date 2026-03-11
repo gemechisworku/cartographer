@@ -36,16 +36,16 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.3.1 | **tree_sitter_analyzer:** LanguageRouter (file extension → grammar); grammars for Python, SQL, YAML, JS/TS ([specs/analyzers.md](../specs/analyzers.md)). | src/analyzers/tree_sitter_analyzer.py | ⬜ |
-| 1.3.2 | **tree_sitter_analyzer:** AST parsing — extract imports, public functions, classes; optional complexity. Output shapes that feed ModuleNode / FunctionNode / IMPORTS. | Same file | ⬜ |
-| 1.3.3 | **sql_lineage:** sqlglot-based extraction of table dependencies from .sql / dbt; dialects Postgres, BigQuery, Snowflake, DuckDB. | src/analyzers/sql_lineage.py | ⬜ |
-| 1.3.4 | **dag_config_parser:** Parse Airflow DAG (Python) and/or dbt schema.yml for pipeline topology and config→pipeline. | src/analyzers/dag_config_parser.py | ⬜ |
+| 1.3.1 | **tree_sitter_analyzer:** LanguageRouter (file extension → grammar); grammars for Python, SQL, YAML, JS/TS ([specs/analyzers.md](../specs/analyzers.md)). | src/analyzers/tree_sitter_analyzer.py | ✅ |
+| 1.3.2 | **tree_sitter_analyzer:** AST parsing — extract imports, public functions, classes; optional complexity. Output shapes that feed ModuleNode / FunctionNode / IMPORTS. | Same file | ✅ |
+| 1.3.3 | **sql_lineage:** sqlglot-based extraction of table dependencies from .sql / dbt; dialects Postgres, BigQuery, Snowflake, DuckDB. | src/analyzers/sql_lineage.py | ✅ |
+| 1.3.4 | **dag_config_parser:** Parse Airflow DAG (Python) and/or dbt schema.yml for pipeline topology and config→pipeline. | src/analyzers/dag_config_parser.py | ✅ |
 
 ### 1.4 Knowledge graph layer
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 1.4.1 | **knowledge_graph.py:** NetworkX wrapper — add module nodes/edges, lineage nodes/edges; serialize to JSON (module_graph, lineage_graph). | src/graph/knowledge_graph.py | ⬜ |
+| 1.4.1 | **knowledge_graph.py:** NetworkX wrapper — add module nodes/edges, lineage nodes/edges; serialize to JSON (module_graph, lineage_graph). | src/graph/knowledge_graph.py | ✅ |
 
 ### 1.5 Surveyor agent
 

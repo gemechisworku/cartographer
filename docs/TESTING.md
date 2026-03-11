@@ -66,12 +66,18 @@ uv run pytest -v
 
 ---
 
-## What’s tested (Phase 1 steps 1–2)
+## What’s tested
 
 - **Node models** (`tests/unit/models/test_nodes.py`):  
   `ModuleNode`, `DatasetNode`, `FunctionNode`, `TransformationNode` — minimal and full valid payloads, required fields, validation (e.g. `DatasetNode.storage_type` must be one of table/file/stream/api).
 - **Edge types** (`tests/unit/models/test_edges.py`):  
   `EdgeType` enum (IMPORTS, PRODUCES, CONSUMES, CALLS, CONFIGURES), `EdgePayload` (weight, extra), serialization roundtrip.
+- **Analyzers** (`tests/unit/analyzers/`):  
+  **tree_sitter_analyzer** — LanguageRouter (Python, YAML, unknown), parse_file, analyze_module (imports, public functions/classes, private excluded).  
+  **sql_lineage** — extract_table_dependencies (SELECT, JOIN, INSERT, CREATE TABLE AS, dialects), extract_lineage_from_file.  
+  **dag_config_parser** — parse_dbt_schema_yml (models), parse_airflow_dag_python (task_id, >>), analyze_dag_config dispatch.
+- **Knowledge graph** (`tests/unit/graph/test_knowledge_graph.py`):  
+  add_module_node, add_import_edge, add_function_node, add_calls_edge; add_dataset_node, add_transformation_node, add_produces/consumes; serialize, write_module_graph_json, write_lineage_graph_json, load roundtrip.
 
 ---
 
