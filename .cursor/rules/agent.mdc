@@ -1,0 +1,73 @@
+---
+alwaysApply: true
+description: Rules for any coding agent working on the Brownfield Cartographer project — spec-first workflow, planning, code with tests, and review.
+---
+
+# Cartographer — Agent Guidelines
+
+This repo is the **Brownfield Cartographer**: a multi-agent codebase intelligence system for data-engineering repos (Python, SQL, YAML, notebooks). It produces a knowledge graph, data lineage, semantic index, CODEBASE.md, and Day-One onboarding brief. Any agent working here should follow: **check spec → plan → implement with tests → review**.
+
+---
+
+## 1. Check the spec first
+
+- **Specs are authoritative.** Before implementing or changing behavior, read the relevant spec(s). Use **specs/README.md** as the index ("read when…" table).
+- **Where to look:**  
+  - **specs/** — Project specs (overview, data-model, analyzers, agents/*, pipeline-and-cli, targets-and-validation).  
+  - **docs/cartographer_challenge_spec.md** — Full challenge requirements.  
+  - **docs/deliverables-and-rubric.md** — Interim/final file lists, dates, evaluation rubric.  
+  - **docs/implementation_plan.md** — Task breakdown and dependency order.
+- Do not implement behavior that contradicts a spec without updating the spec first (and only when the user explicitly requests it).
+
+---
+
+## 2. Plan before coding
+
+- **Use the implementation plan.** Tasks in **docs/implementation_plan.md** are ordered by dependency (e.g. models → analyzers → agents → orchestrator). Complete or satisfy dependencies before building dependents.
+- For a given task, identify which spec(s) apply (e.g. Surveyor → specs/agents/surveyor.md + specs/data-model.md + specs/analyzers.md). Resolve ambiguities using the spec, not guesswork.
+- If adding a new feature not in the plan, map it to the right phase (interim vs final) and the right spec; update the implementation plan if the user agrees.
+
+---
+
+## 3. Write code with tests
+
+- **Tests are part of the work.** For each meaningful unit of behavior (e.g. an analyzer, an agent method), add or extend tests. Prefer tests that are fast, deterministic, and isolated (fixtures for repo paths, mock files, or small real fixtures).
+- **Layout:** Use a **tests/** directory at repo root (e.g. `tests/unit/`, `tests/integration/` as needed). Mirror `src/` structure where it helps (e.g. `tests/unit/analyzers/test_sql_lineage.py`). Optionally use pytest; document in README how to run tests.
+- **Scope:** Unit tests for analyzers and graph operations; integration tests for CLI `analyze` (e.g. run against a tiny fixture repo and assert .cartography/ contents). Avoid tests that depend on external APIs or large repos unless explicitly required.
+- **Naming:** Prefer descriptive test names (e.g. `test_sql_lineage_extracts_from_select_join`, `test_blast_radius_returns_downstream_only`).
+
+---
+
+## 4. Review before considering done
+
+- **Self-review against the spec:** Does the implementation match the spec (inputs, outputs, error behavior)? For agents, do they read/write the correct nodes and edges per **specs/data-model.md**?
+- **Rubric awareness:** The project is evaluated on static analysis depth, data lineage accuracy, semantic intelligence, FDE readiness, and engineering quality. Prefer **graceful degradation**: on parse or analysis failure, **log and skip** the file (or node); do not fail the whole run. See **docs/deliverables-and-rubric.md**.
+- **Evidence and traceability:** Navigator answers and Day-One answers must **cite evidence** (file path, line range, and whether the source is static analysis or LLM inference). The Archivist must produce **cartography_trace.jsonl** for the audit trail.
+- **Lint and type-check:** Run the project’s linter and type checker (e.g. ruff, pyright) and fix issues in the code you touched.
+
+---
+
+## 5. Project conventions
+
+- **Language & tooling:** Python; **uv** for dependency management (pyproject.toml, locked deps). Use **Pydantic** for all graph node/edge and shared DTOs; models live under **src/models/**.
+- **Layout:** **src/cli.py** (entry point), **src/orchestrator.py**, **src/agents/** (surveyor, hydrologist, semanticist, archivist, navigator), **src/analyzers/** (tree_sitter_analyzer, sql_lineage, dag_config_parser), **src/graph/** (knowledge_graph). Outputs go under **.cartography/** (per target repo).
+- **RECONNAISSANCE.md:** Manual Day-One baseline; do **not** edit it for tool or spec changes. It is used later for testing and comparison with Cartographer output.
+- **Incremental updates:** When implementing the Archivist, support re-analyzing only changed files (git diff since last run) so the Cartographer stays practical for ongoing use.
+
+---
+
+## 6. When completing tasks
+
+- **Update docs/implementation_plan.md:** Mark the corresponding task row’s Status as ✅ (or 🟦 if partially done). This keeps the plan accurate for the next agent or the user.
+- **README:** Keep README.md in sync with how to install (uv), run `analyze` and `query`, and what artifacts to expect under .cartography/.
+
+---
+
+## Summary
+
+1. **Check spec** — Read specs/README.md and the relevant spec(s) before implementing.  
+2. **Plan** — Use docs/implementation_plan.md; respect dependency order.  
+3. **Code with tests** — Add or extend tests in tests/ for new or changed behavior.  
+4. **Review** — Align with spec and rubric; graceful degradation; evidence citations; lint/type-check.  
+5. **Conventions** — Python, uv, Pydantic, .cartography/, do not edit RECONNAISSANCE.md.  
+6. **Track** — Update implementation plan status when tasks are completed.
