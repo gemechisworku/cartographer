@@ -92,10 +92,10 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 2.1.1 | **semanticist.py:** ContextWindowBudget — token estimation, cumulative spend, tiered model (e.g. cheap for bulk, expensive for synthesis) ([specs/agents/semanticist.md](../specs/agents/semanticist.md)). | src/agents/semanticist.py | ⬜ |
-| 2.1.2 | **semanticist.py:** `generate_purpose_statement(module_node)` from code (not docstring); flag documentation drift. | Same | ⬜ |
-| 2.1.3 | **semanticist.py:** `cluster_into_domains()` — embed purpose statements, k-means (k=5–8), label clusters. | Same | ⬜ |
-| 2.1.4 | **semanticist.py:** `answer_day_one_questions()` — synthesis prompt with Surveyor + Hydrologist output; five answers with evidence citations. | Same | ⬜ |
+| 2.1.1 | **semanticist.py:** ContextWindowBudget — token estimation, cumulative spend, tiered model (e.g. cheap for bulk, expensive for synthesis) ([specs/agents/semanticist.md](../specs/agents/semanticist.md)). | src/agents/semanticist.py | ✅ |
+| 2.1.2 | **semanticist.py:** `generate_purpose_statement(module_node)` from code (not docstring); flag documentation drift. | Same | ✅ |
+| 2.1.3 | **semanticist.py:** `cluster_into_domains()` — embed purpose statements, k-means (k=5–8), label clusters. | Same | ✅ |
+| 2.1.4 | **semanticist.py:** `answer_day_one_questions()` — synthesis prompt with Surveyor + Hydrologist output; five answers with evidence citations. | Same | ✅ |
 
 ### 2.2 Archivist agent
 
