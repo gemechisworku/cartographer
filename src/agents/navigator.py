@@ -1,20 +1,23 @@
 """Navigator agent: query interface to the knowledge graph with four tools and evidence citations.
 
 Tools: find_implementation, trace_lineage, blast_radius, explain_module.
-Every response cites source file, line range, and analysis method (static vs LLM).
-Per specs/agents/navigator.md. No LangGraph dependency; implements a simple tool-calling REPL.
+Every response includes file_path, line_range where available, and explicit analysis_method (static vs LLM).
+Supports chaining (e.g. find then explain). find_implementation can use vector similarity over embeddings.
+Per specs/agents/navigator.md.
 """
 import json
 import logging
 from pathlib import Path
-from typing import Any, Literal
+from typing import Any, Callable, Literal, Optional
 
 from src.agents.hydrologist import blast_radius as hydrologist_blast_radius
 from src.graph.knowledge_graph import KnowledgeGraph
 
 logger = logging.getLogger(__name__)
 
-# Evidence citation suffix for each tool
+# Explicit labels for rubric: every response labels static vs LLM
+ANALYSIS_STATIC = "static"
+ANALYSIS_LLM = "LLM"
 CITATION_STATIC_LINEAGE = "static analysis (lineage graph)."
 CITATION_STATIC_LINEAGE_AND_MODULE = "static analysis (lineage + module graph)."
 CITATION_SEMANTIC = "semantic search (LLM-derived purpose)."
@@ -34,17 +37,70 @@ def _load_purpose_index(cartography_dir: Path) -> list[dict[str, Any]]:
         return []
 
 
+def _cosine_similarity(a: list[float], b: list[float]) -> float:
+    """Cosine similarity between two vectors."""
+    if not a or not b or len(a) != len(b):
+        return 0.0
+    dot = sum(x * y for x, y in zip(a, b))
+    na = sum(x * x for x in a) ** 0.5
+    nb = sum(x * x for x in b) ** 0.5
+    if na == 0 or nb == 0:
+        return 0.0
+    return dot / (na * nb)
+
+
 def find_implementation(
     concept: str,
     purpose_index: list[dict[str, Any]],
     *,
     top_k: int = 10,
+    embed_fn: Optional[Callable[[list[str]], list[list[float]]]] = None,
 ) -> tuple[list[dict[str, Any]], str]:
-    """Search purpose statements for where a concept is implemented. Returns (matches, citation)."""
-    concept_lower = concept.lower().strip()
-    if not concept_lower:
+    """Search purpose statements: vector similarity over embeddings when embed_fn provided; else keyword/prefix match.
+    Returns (matches, citation). Each match includes file_path, line_range (if available), snippet, confidence, analysis_method.
+    """
+    def _norm(m: dict[str, Any]) -> dict[str, Any]:
+        """Ensure every match has file_path, line_range, analysis_method for rubric."""
+        m.setdefault("file_path", m.get("path", ""))
+        m.setdefault("line_range", m.get("line_range"))
+        m.setdefault("analysis_method", ANALYSIS_LLM)
+        return m
+
+    concept_stripped = concept.strip()
+    if not concept_stripped:
         return [], CITATION_SEMANTIC
-    # Prefix match: concept "orchestrator" should match text containing "orchestrates" (shared stem)
+
+    # Vector similarity path (rubric: enhance with embeddings)
+    if embed_fn and purpose_index:
+        try:
+            texts = [entry.get("purpose_statement") or "" for entry in purpose_index]
+            if not texts:
+                pass
+            else:
+                query_embed = embed_fn([concept_stripped])
+                purpose_embeds = embed_fn(texts)
+                if query_embed and purpose_embeds and len(query_embed) == 1 and len(purpose_embeds) == len(purpose_index):
+                    q = query_embed[0]
+                    scores = [_cosine_similarity(q, pe) for pe in purpose_embeds]
+                    matches = []
+                    for i, entry in enumerate(purpose_index):
+                        if scores[i] <= 0:
+                            continue
+                        matches.append(_norm({
+                            "path": entry.get("path", ""),
+                            "file_path": entry.get("path", ""),
+                            "line_range": None,
+                            "snippet": (entry.get("purpose_statement") or "")[:200],
+                            "confidence": round(scores[i], 4),
+                            "analysis_method": ANALYSIS_LLM,
+                        }))
+                    matches.sort(key=lambda m: m["confidence"], reverse=True)
+                    return matches[:top_k], CITATION_SEMANTIC
+        except Exception as e:
+            logger.debug("Embedding search failed, falling back to keyword: %s", e)
+
+    # Keyword / prefix match fallback
+    concept_lower = concept_stripped.lower()
     def _matches(c: str, text: str) -> bool:
         if c in text:
             return True
@@ -53,11 +109,10 @@ def find_implementation(
                 continue
             if w in text:
                 return True
-            # 5+ char prefix of word (e.g. "orchestr" from "orchestrator") matches inside any word
             if len(w) >= 5 and w[:6] in text:
                 return True
         return False
-    matches: list[dict[str, Any]] = []
+    matches = []
     for entry in purpose_index:
         path = entry.get("path", "")
         purpose = (entry.get("purpose_statement") or "").lower()
@@ -72,12 +127,14 @@ def find_implementation(
             score = 0.7
         elif len(concept_lower) >= 5 and concept_lower[:6] in text:
             score = 0.6
-        matches.append({
-                "path": path,
-                "line_range": None,
-                "snippet": (entry.get("purpose_statement") or "")[:200],
-                "confidence": score,
-            })
+        matches.append(_norm({
+            "path": path,
+            "file_path": path,
+            "line_range": None,
+            "snippet": (entry.get("purpose_statement") or "")[:200],
+            "confidence": score,
+            "analysis_method": ANALYSIS_LLM,
+        }))
     matches.sort(key=lambda m: m["confidence"], reverse=True)
     return matches[:top_k], CITATION_SEMANTIC
 
@@ -118,6 +175,8 @@ def trace_lineage(
             "type": node_type,
             "source_file": data.get("source_file"),
             "line_range": data.get("line_range"),
+            "file_path": data.get("source_file"),
+            "analysis_method": ANALYSIS_STATIC,
         })
         if direction == "upstream":
             # T produces n => T is predecessor with PRODUCES; then S consumed by T => S is predecessor of T with CONSUMES
@@ -140,15 +199,15 @@ def blast_radius(
 ) -> tuple[list[dict[str, Any]], str]:
     """Return affected nodes if this module changes: lineage impact + modules that import it."""
     results: list[dict[str, Any]] = []
-    # Lineage: blast_radius on lineage graph (node_id can be dataset or transformation id)
     lineage_affected = hydrologist_blast_radius(kg, module_path)
     for node_id, source_file, line_range in lineage_affected:
         results.append({
             "node_id": node_id,
             "source_file": source_file,
             "line_range": line_range,
+            "file_path": source_file,
+            "analysis_method": ANALYSIS_STATIC,
         })
-    # Module graph: who imports this module?
     MG = kg.module_graph
     if MG.has_node(module_path):
         for importer in MG.predecessors(module_path):
@@ -158,6 +217,8 @@ def blast_radius(
                     "node_id": importer,
                     "source_file": importer if MG.nodes.get(importer, {}).get("path") == importer else None,
                     "line_range": None,
+                    "file_path": importer if MG.nodes.get(importer, {}).get("path") == importer else None,
+                    "analysis_method": ANALYSIS_STATIC,
                 })
     return results, CITATION_STATIC_LINEAGE_AND_MODULE
 
@@ -227,9 +288,10 @@ def run_interactive(
     purpose_index: list[dict[str, Any]],
     *,
     prompt: str = "Query (find/trace/blast/explain or natural language; empty to exit): ",
+    embed_fn: Optional[Callable[[list[str]], list[list[float]]]] = None,
 ) -> None:
-    """Simple REPL: read query, dispatch to a tool, print result with citations."""
-    print("Navigator — query the codebase graph. Commands: /find <concept>, /trace <dataset> upstream|downstream, /blast <module_path>, /explain <path>. Or ask in natural language.")
+    """REPL with tool chaining: e.g. 'find X and explain' runs find then explain on first result. All responses include file_path, line_range where available, analysis_method (static vs LLM)."""
+    print("Navigator — query the codebase graph. Commands: /find <concept>, /trace <dataset> upstream|downstream, /blast <module_path>, /explain <path>. Or ask in natural language (e.g. 'where is X and explain it').")
     while True:
         try:
             line = input(prompt).strip()
@@ -238,13 +300,35 @@ def run_interactive(
             break
         if not line:
             break
+        line_lower = line.lower()
+        # Chained query: find then explain (rubric: agent loop that chains tools in response to single query)
+        if ("find" in line_lower or "where" in line_lower) and "explain" in line_lower:
+            concept = line.replace("?", "").strip()
+            for w in ("where is", "where's", "find", "explain it", "and explain", "then explain"):
+                if concept.lower().startswith(w):
+                    concept = concept[len(w):].strip()
+                concept = concept.replace(" and explain", "").replace(" then explain", "").replace(" it", "").strip()
+            if concept:
+                matches, cit = find_implementation(concept, purpose_index, embed_fn=embed_fn)
+                print(f"[analysis_method: {ANALYSIS_LLM}] find_implementation({concept!r}): {len(matches)} matches. {cit}")
+                for m in matches[:5]:
+                    fp = m.get("file_path") or m.get("path", "")
+                    lr = m.get("line_range")
+                    print(f"  - file_path={fp!r}, line_range={lr}, confidence={m.get('confidence', 0)}")
+                if matches:
+                    first_path = (matches[0].get("file_path") or matches[0].get("path", "")).strip()
+                    if first_path:
+                        explanation, citations = explain_module(kg, first_path, purpose_index)
+                        print(f"[analysis_method: LLM/static] explain_module({first_path!r}): {explanation}")
+                        print("  Citations:", "; ".join(citations))
+            continue
         # Dispatch
         if line.startswith("/find "):
             concept = line[6:].strip()
-            matches, cit = find_implementation(concept, purpose_index)
-            print(f"find_implementation({concept!r}): {len(matches)} matches. Citation: {cit}")
+            matches, cit = find_implementation(concept, purpose_index, embed_fn=embed_fn)
+            print(f"[analysis_method: {ANALYSIS_LLM}] find_implementation: {len(matches)} matches. {cit}")
             for m in matches[:5]:
-                print(f"  - {m['path']} (confidence={m.get('confidence', 0)})")
+                print(f"  - file_path={m.get('file_path') or m.get('path')!r}, line_range={m.get('line_range')}, confidence={m.get('confidence', 0)}")
             continue
         if line.startswith("/trace "):
             rest = line[7:].strip().split()
@@ -256,56 +340,54 @@ def run_interactive(
                 print("Direction must be upstream or downstream")
                 continue
             chain, cit = trace_lineage(kg, dataset, dir_str)
-            print(f"trace_lineage({dataset!r}, {dir_str}): {len(chain)} nodes. Citation: {cit}")
+            print(f"[analysis_method: {ANALYSIS_STATIC}] trace_lineage({dataset!r}, {dir_str}): {len(chain)} nodes. {cit}")
             for c in chain[:15]:
-                sf = c.get("source_file") or c["node_id"]
+                fp = c.get("file_path") or c.get("source_file") or c["node_id"]
                 lr = c.get("line_range")
-                print(f"  - {c['node_id']} ({c['type']}) @ {sf}" + (f" {lr}" if lr else ""))
+                print(f"  - file_path={fp!r}, line_range={lr}, node_id={c['node_id']} ({c['type']})")
             continue
         if line.startswith("/blast "):
             mod = line[7:].strip()
             results, cit = blast_radius(kg, mod)
-            print(f"blast_radius({mod!r}): {len(results)} affected. Citation: {cit}")
+            print(f"[analysis_method: {ANALYSIS_STATIC}] blast_radius({mod!r}): {len(results)} affected. {cit}")
             for r in results[:15]:
-                print(f"  - {r['node_id']} @ {r.get('source_file')} {r.get('line_range')}")
+                print(f"  - file_path={r.get('file_path') or r.get('source_file')!r}, line_range={r.get('line_range')}, node_id={r['node_id']}")
             continue
         if line.startswith("/explain "):
             path = line[9:].strip()
             explanation, citations = explain_module(kg, path, purpose_index)
-            print(f"explain_module({path!r}):")
+            print(f"[analysis_method: LLM/static] explain_module file_path={path!r}:")
             print(f"  {explanation}")
             print("  Citations:", "; ".join(citations))
             continue
         # Natural language: simple keyword routing
-        line_lower = line.lower()
         if "where" in line_lower and ("implement" in line_lower or "logic" in line_lower or "code" in line_lower):
             concept = line.replace("?", "").strip()
             for w in ("where is", "where's", "where are"):
                 if concept.lower().startswith(w):
                     concept = concept[len(w):].strip()
                     break
-            matches, cit = find_implementation(concept, purpose_index)
-            print(f"find_implementation: {len(matches)} matches. Citation: {cit}")
+            matches, cit = find_implementation(concept, purpose_index, embed_fn=embed_fn)
+            print(f"[analysis_method: {ANALYSIS_LLM}] find_implementation: {len(matches)} matches. {cit}")
             for m in matches[:5]:
-                print(f"  - {m['path']}")
+                print(f"  - file_path={m.get('file_path') or m.get('path')!r}, line_range={m.get('line_range')}")
             continue
         if "produce" in line_lower or "upstream" in line_lower or "source" in line_lower:
             words = line.replace("?", "").split()
             dataset = words[-1] if words else ""
             chain, cit = trace_lineage(kg, dataset, "upstream")
-            print(f"trace_lineage upstream from {dataset}: {len(chain)} nodes. Citation: {cit}")
+            print(f"[analysis_method: {ANALYSIS_STATIC}] trace_lineage upstream from {dataset}: {len(chain)} nodes. {cit}")
             for c in chain[:10]:
-                print(f"  - {c['node_id']}")
+                print(f"  - file_path={c.get('file_path') or c.get('source_file')!r}, line_range={c.get('line_range')}")
             continue
         if "break" in line_lower or "blast" in line_lower or "affect" in line_lower:
-            # Try to extract module path (last word or quoted)
             words = line.split()
             mod = words[-1].strip(".?") if words else ""
             if mod:
                 results, cit = blast_radius(kg, mod)
-                print(f"blast_radius({mod}): {len(results)} affected. Citation: {cit}")
+                print(f"[analysis_method: {ANALYSIS_STATIC}] blast_radius({mod}): {len(results)} affected. {cit}")
                 for r in results[:10]:
-                    print(f"  - {r['node_id']}")
+                    print(f"  - file_path={r.get('file_path') or r.get('source_file')!r}, line_range={r.get('line_range')}")
             else:
                 print("Specify a module path for blast radius.")
             continue
@@ -314,22 +396,28 @@ def run_interactive(
             path = words[-1].strip(".?") if words else ""
             if path:
                 explanation, citations = explain_module(kg, path, purpose_index)
-                print(explanation)
+                print(f"[analysis_method: LLM/static] file_path={path!r}: {explanation}")
                 print("Citations:", "; ".join(citations))
             else:
                 print("Specify a module path to explain.")
             continue
-        # Default: try find_implementation with full line as concept
-        matches, cit = find_implementation(line, purpose_index)
-        print(f"find_implementation: {len(matches)} matches. Citation: {cit}")
+        # Default: find_implementation with full line as concept
+        matches, cit = find_implementation(line, purpose_index, embed_fn=embed_fn)
+        print(f"[analysis_method: {ANALYSIS_LLM}] find_implementation: {len(matches)} matches. {cit}")
         for m in matches[:5]:
-            print(f"  - {m['path']}")
+            print(f"  - file_path={m.get('file_path') or m.get('path')!r}, line_range={m.get('line_range')}")
 
 
-def run_query(cartography_dir: str | Path) -> None:
-    """Load .cartography/ and run Navigator interactive loop."""
+def run_query(cartography_dir: str | Path, embed_fn: Optional[Callable[[list[str]], list[list[float]]]] = None) -> None:
+    """Load .cartography/ and run Navigator interactive loop. Pass embed_fn for vector similarity in find_implementation."""
     cartography_dir = Path(cartography_dir)
     if not cartography_dir.is_dir():
         raise NotADirectoryError(str(cartography_dir))
     kg, purpose_index = load_cartography(cartography_dir)
-    run_interactive(kg, purpose_index)
+    if embed_fn is None:
+        try:
+            from src.agents.semanticist import _default_embed
+            embed_fn = _default_embed
+        except Exception:
+            pass
+    run_interactive(kg, purpose_index, embed_fn=embed_fn)

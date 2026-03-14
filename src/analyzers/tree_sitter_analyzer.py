@@ -214,6 +214,159 @@ def extract_js_imports(source: bytes, tree: Tree, file_path: str) -> list[tuple[
     return results
 
 
+def extract_python_data_flow(
+    source: bytes, tree: Tree, file_path: str
+) -> tuple[list[dict[str, Any]], list[str]]:
+    """Extract data flow from Python AST: pandas read_*/to_*, SQLAlchemy execute/text, PySpark read/write.
+    Returns (transformations, dynamic_refs_log).
+    Each transformation: {sources or targets: list[str], source_file, line_range, transformation_type, dynamic_refs}.
+    Unresolved (variable/f-string) refs are logged in dynamic_refs_log and not emitted as concrete datasets.
+    """
+    transformations: list[dict[str, Any]] = []
+    dynamic_refs_log: list[str] = []
+    root = tree.root_node
+    if root is None:
+        return transformations, dynamic_refs_log
+    path_n = file_path.replace("\\", "/")
+
+    def get_call_name(n: Node) -> Optional[str]:
+        """Return qualified name for call (e.g. 'read_csv', 'pd.read_csv', 'df.to_parquet')."""
+        if n.type == "attribute":
+            obj = n.child_by_field_name("object")
+            attr = n.child_by_field_name("attribute")
+            if obj and attr:
+                sub = get_call_name(obj)
+                name = _get_text(source, attr).strip()
+                return f"{sub}.{name}" if sub else name
+            return None
+        if n.type == "identifier":
+            return _get_text(source, n).strip()
+        return None
+
+    def _collect_strings_from_node(n: Node) -> list[str]:
+        """Recursively collect string literal text from a node (argument_list may nest argument -> string)."""
+        out: list[str] = []
+        if n.type in ("string", "concatenated_string"):
+            s = _get_text(source, n).strip().strip("'\"").strip()
+            if s:
+                out.append(s)
+            return out
+        for c in n.children:
+            out.extend(_collect_strings_from_node(c))
+        return out
+
+    def get_string_arg(args_node: Node, idx: int = 0) -> Optional[str]:
+        """First string literal argument, or None. Logs dynamic if not literal."""
+        if not args_node or args_node.type != "argument_list":
+            return None
+        strings = _collect_strings_from_node(args_node)
+        if idx < len(strings):
+            return strings[idx]
+        return None
+
+    def get_first_string_or_keyword(args_node: Node, keywords: set[str]) -> Optional[str]:
+        """First positional string or first matching keyword string. Handles nested argument nodes."""
+        if not args_node or args_node.type != "argument_list":
+            return None
+        for c in args_node.children:
+            if c.type == "keyword_argument":
+                name = c.child_by_field_name("name")
+                if name and _get_text(source, name).strip().rstrip("=") in keywords:
+                    val = c.child_by_field_name("value")
+                    if val:
+                        strs = _collect_strings_from_node(val)
+                        if strs:
+                            return strs[0]
+                        dynamic_refs_log.append(f"{path_n}: dynamic ref in keyword -> {_get_text(source, val).strip()[:60]}")
+                    return None
+        all_strings = _collect_strings_from_node(args_node)
+        return all_strings[0] if all_strings else None
+
+    READ_PATTERNS = ("read_csv", "read_parquet", "read_sql", "read_table", "read_json", "read_excel")
+    WRITE_PATTERNS = ("to_csv", "to_parquet", "to_sql", "to_json", "to_excel")
+    PANDAS_READ = {"pd.read_csv", "pd.read_parquet", "pandas.read_csv", "pandas.read_parquet"}
+    PANDAS_WRITE = {"df.to_csv", "df.to_parquet", "dataframe.to_csv"}
+
+    def walk(n: Node) -> None:
+        # tree-sitter-python uses "call"; other grammars may use "call_expression"
+        if n.type not in ("call", "call_expression"):
+            for child in n.children:
+                walk(child)
+            return
+        fn = n.child_by_field_name("function")
+        args = n.child_by_field_name("arguments")
+        if not fn or not args:
+            for child in n.children:
+                walk(child)
+            return
+        name = get_call_name(fn)
+        if not name:
+            for child in n.children:
+                walk(child)
+            return
+        # Normalize: last part for pandas-style
+        parts = name.split(".")
+        last = parts[-1].lower() if parts else ""
+        line_range = (n.start_point[0] + 1, n.end_point[0] + 1)
+
+        # pandas read_* (do not return: walk children to find nested calls)
+        if last in READ_PATTERNS:
+            path_arg = get_first_string_or_keyword(args, {"filepath_or_buffer", "path", "path_or_buf", "name"}) or get_string_arg(args, 0)
+            if path_arg:
+                transformations.append({
+                    "sources": [path_arg],
+                    "targets": [],
+                    "source_file": path_n,
+                    "line_range": line_range,
+                    "transformation_type": "python_pandas",
+                })
+        elif last in WRITE_PATTERNS:
+            path_arg = get_first_string_or_keyword(args, {"path_or_buf", "path", "name"}) or get_string_arg(args, 0)
+            if path_arg:
+                transformations.append({
+                    "sources": [],
+                    "targets": [path_arg],
+                    "source_file": path_n,
+                    "line_range": line_range,
+                    "transformation_type": "python_pandas",
+                })
+        elif "execute" in last or last == "text":
+            s = get_string_arg(args, 0)
+            if s and ("select" in s.lower() or "from" in s.lower() or "insert" in s.lower()):
+                transformations.append({
+                    "sources": [],
+                    "targets": [f"sql:{path_n}:{line_range[0]}"],
+                    "source_file": path_n,
+                    "line_range": line_range,
+                    "transformation_type": "python_sqlalchemy",
+                })
+        elif "read" in name.lower() and ("csv" in last or "parquet" in last or "json" in last):
+            path_arg = get_first_string_or_keyword(args, {"path"}) or get_string_arg(args, 0)
+            if path_arg:
+                transformations.append({
+                    "sources": [path_arg],
+                    "targets": [],
+                    "source_file": path_n,
+                    "line_range": line_range,
+                    "transformation_type": "python_pyspark",
+                })
+        elif "write" in name.lower() and ("parquet" in last or "csv" in last or "save" in last):
+            path_arg = get_first_string_or_keyword(args, {"path"}) or get_string_arg(args, 0)
+            if path_arg:
+                transformations.append({
+                    "sources": [],
+                    "targets": [path_arg],
+                    "source_file": path_n,
+                    "line_range": line_range,
+                    "transformation_type": "python_pyspark",
+                })
+        for child in n.children:
+            walk(child)
+
+    walk(root)
+    return transformations, dynamic_refs_log
+
+
 def analyze_module(
     repo_root: str | Path,
     file_path: str | Path,

@@ -80,7 +80,7 @@ uv run pytest -v
   add_module_node, add_import_edge, add_function_node, add_calls_edge; add_dataset_node, add_transformation_node, add_produces/consumes; serialize, write_module_graph_json, write_lineage_graph_json, load roundtrip.
 - **Agents** (`tests/unit/agents/`):  
   **Surveyor** — analyze_module, extract_git_velocity, run_surveyor (module graph populated).  
-  **Hydrologist** — run_hydrologist (SQL/dbt YAML), blast_radius, find_sources, find_sinks.  
+  **Hydrologist** — run_hydrologist (Python AST + SQL + dbt YAML/DAG), blast_radius, find_sources, find_sinks; Python+SQL+config merged; edges carry transformation_type, source_file, line_range.  
   **Semanticist** — ContextWindowBudget, generate_purpose_statement, cluster_into_domains, answer_day_one_questions, run_semanticist (mock LLM, skip flags, purpose/drift).
 
 ---
@@ -153,6 +153,30 @@ Only `module_graph.json` and `lineage_graph.json` are written; no `day_one_answe
 | Domain clusters | Same node → `domain_cluster` (e.g. `cluster_0` or LLM label) |
 | Five Day-One answers | `day_one_answers.json` → array of `{ "question", "answer", "citations" }` |
 | Doc drift | `documentation_drift.json` → list of `module_path` + `docstring_excerpt` |
+
+---
+
+## Lineage queries: blast_radius, find_sources, find_sinks (multi-language)
+
+The Hydrologist builds a **single lineage graph** from Python (pandas/PySpark/SQLAlchemy), SQL, and config (dbt YAML, Airflow DAG). All edges carry **transformation_type**, **source_file**, and **line_range** where available.
+
+### Example: blast_radius (what breaks if this node changes?)
+
+- **SQL table:** `blast_radius(kg, "raw_events")` — returns downstream transformations and datasets that depend on `raw_events` (e.g. SQL models, Python reads), each with `(node_id, source_file, line_range)`.
+- **Python module / file:** Navigator’s `blast_radius(kg, "src/ingest.py")` combines lineage impact (transformations in that file) plus **module graph** importers (who imports this module).
+
+### Example: find_sources / find_sinks (entry and exit points)
+
+- **find_sources(kg):** nodes with in-degree 0 — e.g. SQL tables that are only read, CSV paths from `pd.read_csv`, or config-defined sources.
+- **find_sinks(kg):** nodes with out-degree 0 — e.g. tables written by INSERT/CTAS, paths from `df.to_parquet`, or final DAG tasks.
+
+### Running queries (Navigator)
+
+After `cartographer analyze .` and `cartographer query .`:
+
+- `/trace my_table upstream` — static analysis (lineage graph); returns chain with source_file and line_range.
+- `/blast src/transforms/revenue.py` — static analysis (lineage + module graph); returns affected node_ids with file and line.
+- Responses always label evidence as **static analysis** (Surveyor/Hydrologist, graph) vs **LLM** (Semanticist, purpose/explain).
 
 ---
 

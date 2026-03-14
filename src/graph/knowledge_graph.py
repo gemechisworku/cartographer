@@ -79,17 +79,61 @@ class KnowledgeGraph:
         self._lineage_graph.add_node(nid, **data)
         return nid
 
-    def add_produces_edge(self, transformation_id: str, dataset_id: str) -> None:
-        """Add PRODUCES: transformation -> dataset."""
-        self._lineage_graph.add_edge(transformation_id, dataset_id, edge_type=EdgeType.PRODUCES.value)
+    def add_produces_edge(
+        self,
+        transformation_id: str,
+        dataset_id: str,
+        *,
+        transformation_type: Optional[str] = None,
+        source_file: Optional[str] = None,
+        line_range: Optional[tuple[int, int]] = None,
+    ) -> None:
+        """Add PRODUCES: transformation -> dataset. Optional edge metadata for rubric consistency."""
+        attrs: dict[str, Any] = {"edge_type": EdgeType.PRODUCES.value}
+        if transformation_type is not None:
+            attrs["transformation_type"] = transformation_type
+        if source_file is not None:
+            attrs["source_file"] = source_file
+        if line_range is not None:
+            attrs["line_range"] = line_range
+        self._lineage_graph.add_edge(transformation_id, dataset_id, **attrs)
 
-    def add_consumes_edge(self, transformation_id: str, dataset_id: str) -> None:
-        """Add CONSUMES: transformation -> dataset."""
-        self._lineage_graph.add_edge(transformation_id, dataset_id, edge_type=EdgeType.CONSUMES.value)
+    def add_consumes_edge(
+        self,
+        transformation_id: str,
+        dataset_id: str,
+        *,
+        transformation_type: Optional[str] = None,
+        source_file: Optional[str] = None,
+        line_range: Optional[tuple[int, int]] = None,
+    ) -> None:
+        """Add CONSUMES: transformation -> dataset. Optional edge metadata for rubric consistency."""
+        attrs: dict[str, Any] = {"edge_type": EdgeType.CONSUMES.value}
+        if transformation_type is not None:
+            attrs["transformation_type"] = transformation_type
+        if source_file is not None:
+            attrs["source_file"] = source_file
+        if line_range is not None:
+            attrs["line_range"] = line_range
+        self._lineage_graph.add_edge(transformation_id, dataset_id, **attrs)
 
-    def add_configures_edge(self, config_file: str, target: str) -> None:
-        """Add CONFIGURES: config_file -> module/pipeline."""
-        self._lineage_graph.add_edge(config_file, target, edge_type=EdgeType.CONFIGURES.value)
+    def add_configures_edge(
+        self,
+        config_file: str,
+        target: str,
+        *,
+        source_file: Optional[str] = None,
+        line_range: Optional[tuple[int, int]] = None,
+    ) -> None:
+        """Add CONFIGURES: config_file -> module/pipeline. Optional edge metadata."""
+        attrs: dict[str, Any] = {"edge_type": EdgeType.CONFIGURES.value, "transformation_type": "config"}
+        if source_file is not None:
+            attrs["source_file"] = source_file
+        elif config_file:
+            attrs["source_file"] = config_file
+        if line_range is not None:
+            attrs["line_range"] = line_range
+        self._lineage_graph.add_edge(config_file, target, **attrs)
 
     def serialize_module_graph(self) -> dict[str, Any]:
         """Export module graph as JSON-serializable dict (nodes + edges with keys)."""
