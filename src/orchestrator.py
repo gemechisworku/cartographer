@@ -1,13 +1,14 @@
-"""Pipeline: sequences Surveyor then Hydrologist in a single run; writes module_graph.json and lineage_graph.json to output directory (default repo/.cartography). CLI accepts repo path; orchestrator serializes results to output dir."""
+"""Pipeline: sequences Surveyor, Hydrologist, Semanticist, and Archivist; writes all .cartography/ artifacts via Archivist. CLI accepts repo path."""
 import logging
-import os
 import shutil
 import subprocess
 import tempfile
 from pathlib import Path
 from urllib.parse import urlparse
 
+from src.agents.archivist import run_archivist
 from src.agents.hydrologist import run_hydrologist
+from src.agents.semanticist import DAY_ONE_QUESTIONS, run_semanticist
 from src.agents.surveyor import run_surveyor
 from src.graph.knowledge_graph import KnowledgeGraph
 
@@ -55,8 +56,9 @@ def run_analysis(
     *,
     days_velocity: int = 30,
     sql_dialect: str = "postgres",
+    run_semanticist_agent: bool = True,
 ) -> KnowledgeGraph:
-    """Run Surveyor then Hydrologist; write module_graph.json and lineage_graph.json to output_dir (default repo_path/.cartography)."""
+    """Run Surveyor, Hydrologist, and (optionally) Semanticist; write artifacts to output_dir (default repo_path/.cartography)."""
     repo_path = Path(repo_path)
     if not repo_path.is_dir():
         raise NotADirectoryError(str(repo_path))
@@ -64,10 +66,25 @@ def run_analysis(
     out.mkdir(parents=True, exist_ok=True)
 
     kg = KnowledgeGraph()
-    # Sequence: Surveyor (module graph) then Hydrologist (lineage graph); then serialize.
-    run_surveyor(repo_path, kg, days_velocity=days_velocity)
-    run_hydrologist(repo_path, kg, sql_dialect=sql_dialect)
 
-    kg.write_module_graph_json(out / "module_graph.json")
-    kg.write_lineage_graph_json(out / "lineage_graph.json")
+    logger.info("Phase 1/4: Surveyor - building module graph (imports, PageRank, git velocity)...")
+    run_surveyor(repo_path, kg, days_velocity=days_velocity)
+    module_count = sum(1 for n in kg.module_graph.nodes() if kg.module_graph.nodes[n].get("path") == n)
+    logger.info("Surveyor done. Module graph: %d modules.", module_count)
+
+    logger.info("Phase 2/4: Hydrologist - building data lineage (SQL, DAG config)...")
+    run_hydrologist(repo_path, kg, sql_dialect=sql_dialect)
+    logger.info("Hydrologist done. Lineage graph: %d nodes.", kg.lineage_graph.number_of_nodes())
+
+    if run_semanticist_agent:
+        logger.info("Phase 3/4: Semanticist - purpose statements, domain clustering, Day-One answers...")
+        day_one_answers, documentation_drift = run_semanticist(repo_path, kg)
+        logger.info("Semanticist done. Day-One answers: 5; documentation drift flagged: %d modules.", len(documentation_drift))
+    else:
+        day_one_answers = [{"question": q, "answer": "(Semanticist skipped)", "citations": []} for q in DAY_ONE_QUESTIONS]
+        documentation_drift = []
+
+    logger.info("Phase 4/4: Archivist - writing all .cartography/ artifacts...")
+    run_archivist(repo_path, kg, out, day_one_answers, documentation_drift)
+    logger.info("Done. Outputs: CODEBASE.md, onboarding_brief.md, module_graph.json, lineage_graph.json, semantic_index/, cartography_trace.jsonl, day_one_answers.json, documentation_drift.json.")
     return kg

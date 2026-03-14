@@ -18,9 +18,9 @@ uv run cartographer analyze .                    # current directory
 uv run cartographer analyze https://github.com/dbt-labs/jaffle_shop
 ```
 
-**Options:** `-o DIR` (output dir), `--days N` (git velocity window), `--sql-dialect` (postgres|bigquery|snowflake|duckdb).
+**Options:** `-o DIR` (output dir), `--days N` (git velocity window), `--sql-dialect` (postgres|bigquery|snowflake|duckdb), `--no-semanticist` (skip LLM/purpose/Day-One).
 
-**Artifacts (interim):** `.cartography/module_graph.json`, `.cartography/lineage_graph.json`.
+**Artifacts:** `.cartography/module_graph.json`, `.cartography/lineage_graph.json`; with Semanticist (default): `.cartography/day_one_answers.json`, `.cartography/documentation_drift.json`, and module nodes gain `purpose_statement` and `domain_cluster`. Without an API key, Semanticist still runs with placeholders (see [docs/TESTING.md](docs/TESTING.md)).
 
 ## Run tests
 

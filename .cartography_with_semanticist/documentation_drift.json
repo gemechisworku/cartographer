@@ -1,0 +1,90 @@
+[
+  {
+    "module_path": "src/cli.py",
+    "docstring_excerpt": "CLI entry point. analyze subcommand accepts repo path (local or GitHub URL); delegates to orchestrator; outputs written to .cartography/ or -o path."
+  },
+  {
+    "module_path": "src/orchestrator.py",
+    "docstring_excerpt": "Pipeline: sequences Surveyor, Hydrologist, and (optionally) Semanticist; writes module_graph.json, lineage_graph.json, and Semanticist artifacts to output directory (default repo/.cartography). CLI accepts repo path; orchestrator serializes results to output dir."
+  },
+  {
+    "module_path": "tests/conftest.py",
+    "docstring_excerpt": "Pytest configuration and shared fixtures.\n\nWhen the project is installed (e.g. uv sync), the 'src' package is on the path.\nImports in tests use: from src.models.nodes import ..."
+  },
+  {
+    "module_path": "src/agents/hydrologist.py",
+    "docstring_excerpt": "Hydrologist agent: merges data flow from SQL lineage (sqlglot) and DAG config (dbt schema.yml, Airflow DAG Python) into a single NetworkX lineage DiGraph. Provides blast_radius(node_id), find_sources(), find_sinks().\n\nUses src.analyzers.sql_lineage and src.analyzers.dag_config_parser; merges into kg.lineage_graph. Per specs/agents/hydrologist.md."
+  },
+  {
+    "module_path": "src/agents/semanticist.py",
+    "docstring_excerpt": "Semanticist agent: LLM-powered purpose statements from code, doc drift, domain clustering, and Day-One answers.\n\nConsumes Surveyor + Hydrologist output; updates ModuleNode.purpose_statement and domain_cluster;\nproduces Day-One answers with evidence and documentation drift flags for the Archivist.\nPer specs/agents/semanticist.md."
+  },
+  {
+    "module_path": "src/agents/surveyor.py",
+    "docstring_excerpt": "Surveyor agent: builds module import graph (NetworkX DiGraph), runs PageRank and strongly connected components, analyzes git history for change velocity, and flags dead-code candidates (exported symbols with no import references).\n\nPer specs/agents/surveyor.md. Populates knowledge graph with ModuleNode, FunctionNode, IMPORTS."
+  },
+  {
+    "module_path": "src/analyzers/dag_config_parser.py",
+    "docstring_excerpt": "Extract pipeline topology from Airflow DAG (Python) and dbt schema.yml.\n\nPer specs/analyzers.md. Feeds CONFIGURES; upstream/downstream for lineage."
+  },
+  {
+    "module_path": "src/analyzers/sql_lineage.py",
+    "docstring_excerpt": "SQL dependency extraction via sqlglot.\n\nParses SQL and extracts table-level dependencies from SELECT, FROM, JOIN, and WITH (CTE)\nfor sources; INSERT/MERGE/CREATE/UPDATE for targets. Supports postgres, bigquery, snowflake, duckdb.\nPer specs/analyzers.md. Feeds DatasetNode, TransformationNode, CONSUMES, PRODUCES."
+  },
+  {
+    "module_path": "src/analyzers/tree_sitter_analyzer.py",
+    "docstring_excerpt": "Multi-language AST parsing with tree-sitter: loads grammars for Python, YAML, JavaScript/TypeScript; routes by file extension; extracts imports, function defs, class defs from AST (no regex). Used by Surveyor and Hydrologist. Per specs/analyzers.md."
+  },
+  {
+    "module_path": "src/graph/knowledge_graph.py",
+    "docstring_excerpt": "Knowledge graph storage layer: NetworkX wrapper bridging Pydantic schemas (src/models) to graphs.\n\nProvides add_* methods for typed nodes/edges (ModuleNode, DatasetNode, etc.), serialize to JSON,\ndeserialize from JSON (including from file via load_module_graph_json/load_lineage_graph_json).\nUsed by Surveyor (module graph) and Hydrologist (lineage). Per specs/data-model.md."
+  },
+  {
+    "module_path": "src/models/edges.py",
+    "docstring_excerpt": "Pydantic edge types for the knowledge graph (EdgeType, EdgePayload).\n\nUsed by the storage layer in src/graph/knowledge_graph.py. Per specs/data-model.md."
+  },
+  {
+    "module_path": "src/models/nodes.py",
+    "docstring_excerpt": "Pydantic node types for the knowledge graph (ModuleNode, DatasetNode, FunctionNode, TransformationNode).\n\nUsed by the storage layer in src/graph/knowledge_graph.py. Per specs/data-model.md."
+  },
+  {
+    "module_path": "src/models/__init__.py",
+    "docstring_excerpt": "Pydantic models for the knowledge graph (nodes and edges)."
+  },
+  {
+    "module_path": "tests/unit/agents/test_hydrologist.py",
+    "docstring_excerpt": "Tests for Hydrologist: run_hydrologist, blast_radius, find_sources, find_sinks."
+  },
+  {
+    "module_path": "tests/unit/agents/test_semanticist.py",
+    "docstring_excerpt": "Tests for Semanticist: ContextWindowBudget, generate_purpose_statement, cluster_into_domains, answer_day_one_questions, run_semanticist."
+  },
+  {
+    "module_path": "tests/unit/agents/test_surveyor.py",
+    "docstring_excerpt": "Tests for Surveyor: analyze_module, extract_git_velocity, run_surveyor."
+  },
+  {
+    "module_path": "tests/unit/analyzers/test_dag_config_parser.py",
+    "docstring_excerpt": "Tests for dag_config_parser: dbt schema.yml and Airflow DAG parsing."
+  },
+  {
+    "module_path": "tests/unit/analyzers/test_sql_lineage.py",
+    "docstring_excerpt": "Tests for sql_lineage: table dependency extraction via sqlglot."
+  },
+  {
+    "module_path": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+    "docstring_excerpt": "Tests for tree_sitter_analyzer: LanguageRouter and Python AST extraction."
+  },
+  {
+    "module_path": "tests/unit/graph/test_knowledge_graph.py",
+    "docstring_excerpt": "Tests for KnowledgeGraph: add nodes/edges, serialize, write JSON."
+  },
+  {
+    "module_path": "tests/unit/models/test_edges.py",
+    "docstring_excerpt": "Tests for knowledge graph edge types (specs/data-model.md)."
+  },
+  {
+    "module_path": "tests/unit/models/test_nodes.py",
+    "docstring_excerpt": "Tests for knowledge graph node models (specs/data-model.md)."
+  }
+]

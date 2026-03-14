@@ -101,9 +101,9 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 2.2.1 | **archivist.py:** `generate_CODEBASE_md()` — Architecture Overview, Critical Path, Data Sources & Sinks, Known Debt, Recent Change Velocity, Module Purpose Index ([specs/agents/archivist.md](../specs/agents/archivist.md)). | src/agents/archivist.py | ⬜ |
-| 2.2.2 | **archivist.py:** onboarding_brief.md from Day-One answers; lineage_graph.json; semantic_index/ (vector store persistence); cartography_trace.jsonl. | Same | ⬜ |
-| 2.2.3 | **archivist.py:** Incremental update mode — git diff since last run; re-analyze only changed files; merge into graph. | Same | ⬜ |
+| 2.2.1 | **archivist.py:** `generate_CODEBASE_md()` — Architecture Overview, Critical Path, Data Sources & Sinks, Known Debt, Recent Change Velocity, Module Purpose Index ([specs/agents/archivist.md](../specs/agents/archivist.md)). | src/agents/archivist.py | ✅ |
+| 2.2.2 | **archivist.py:** onboarding_brief.md from Day-One answers; lineage_graph.json; semantic_index/ (vector store persistence); cartography_trace.jsonl. | Same | ✅ |
+| 2.2.3 | **archivist.py:** Incremental update mode — git diff since last run; re-analyze only changed files; merge into graph. | Same | 🟦 |
 
 ### 2.3 Navigator agent
 
@@ -116,7 +116,7 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 2.4.1 | **orchestrator.py:** Full pipeline Surveyor → Hydrologist → Semanticist → Archivist; produce all .cartography/ artifacts. | src/orchestrator.py | ⬜ |
+| 2.4.1 | **orchestrator.py:** Full pipeline Surveyor → Hydrologist → Semanticist → Archivist; produce all .cartography/ artifacts. | src/orchestrator.py | ✅ |
 | 2.4.2 | **cli.py:** Subcommand `query` — load graph/artifacts, start Navigator interactive mode. | src/cli.py | ⬜ |
 | 2.4.3 | **README.md:** Document running against any GitHub URL; both `analyze` and `query` modes. | README.md | ⬜ |
 

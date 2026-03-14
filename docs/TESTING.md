@@ -80,7 +80,79 @@ uv run pytest -v
   add_module_node, add_import_edge, add_function_node, add_calls_edge; add_dataset_node, add_transformation_node, add_produces/consumes; serialize, write_module_graph_json, write_lineage_graph_json, load roundtrip.
 - **Agents** (`tests/unit/agents/`):  
   **Surveyor** — analyze_module, extract_git_velocity, run_surveyor (module graph populated).  
-  **Hydrologist** — run_hydrologist (SQL/dbt YAML), blast_radius, find_sources, find_sinks.
+  **Hydrologist** — run_hydrologist (SQL/dbt YAML), blast_radius, find_sources, find_sinks.  
+  **Semanticist** — ContextWindowBudget, generate_purpose_statement, cluster_into_domains, answer_day_one_questions, run_semanticist (mock LLM, skip flags, purpose/drift).
+
+---
+
+## Testing Semanticist features
+
+The Semanticist runs as part of `cartographer analyze` unless you pass `--no-semanticist`. It adds **purpose statements**, **domain clustering**, and **Day-One answers**; without an LLM API key it still runs and writes placeholder text (graceful degradation).
+
+### 1. Unit tests (no API key)
+
+Fast, deterministic tests with mock LLM and embeddings:
+
+```bash
+uv run pytest tests/unit/agents/test_semanticist.py -v
+```
+
+Covers: budget tracking, purpose generation from code, doc-drift heuristic, domain clustering (k-means), Day-One answer parsing, and `run_semanticist` with skip flags.
+
+### 2. Run analysis without an API key (placeholders)
+
+Without `OPENAI_API_KEY` or `OPENROUTER_API_KEY`, the Semanticist uses placeholders and fallback embeddings so the pipeline still completes:
+
+```bash
+# From repo root
+uv run cartographer analyze .
+```
+
+**Check outputs:**
+
+- **`.cartography/module_graph.json`** — Module nodes may have `purpose_statement` and `domain_cluster` (if any purpose was generated; without key, placeholders may appear).
+- **`.cartography/day_one_answers.json`** — Five questions with `answer` and `citations`; without key you’ll see placeholder text like `[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]`.
+- **`.cartography/documentation_drift.json`** — List of `{ "module_path", "docstring_excerpt" }` where code vs docstring were flagged as contradicting.
+
+### 3. Run analysis with an API key (real LLM)
+
+For real purpose statements, domain labels, and Day-One answers, set an API key. The CLI **loads a `.env` file** from the current working directory, so you can put `OPENAI_API_KEY=sk-...` in a `.env` file in the project root (do not commit; `.env` is in `.gitignore`) and run `uv run cartographer analyze .` from that directory—no need to set the variable in the shell.
+
+```bash
+# OpenAI (cmd)
+set OPENAI_API_KEY=sk-...
+uv run cartographer analyze .
+
+# PowerShell
+$env:OPENAI_API_KEY = "sk-..."
+uv run cartographer analyze .
+
+# Or OpenRouter (e.g. other models)
+set OPENROUTER_API_KEY=sk-...
+set OPENAI_BASE_URL=https://openrouter.ai/api/v1
+uv run cartographer analyze .
+```
+
+Then inspect the same files; `day_one_answers.json` should have concrete answers and file/line citations.
+
+### 4. Skip Semanticist (faster runs)
+
+To run only Surveyor + Hydrologist (no LLM, no purpose/domain/Day-One):
+
+```bash
+uv run cartographer analyze . --no-semanticist
+```
+
+Only `module_graph.json` and `lineage_graph.json` are written; no `day_one_answers.json` or `documentation_drift.json`.
+
+### 5. Quick verification checklist
+
+| What to check | Where |
+|---------------|--------|
+| Purpose on modules | `module_graph.json` → `nodes` → node with `path` → `purpose_statement` |
+| Domain clusters | Same node → `domain_cluster` (e.g. `cluster_0` or LLM label) |
+| Five Day-One answers | `day_one_answers.json` → array of `{ "question", "answer", "citations" }` |
+| Doc drift | `documentation_drift.json` → list of `module_path` + `docstring_excerpt` |
 
 ---
 

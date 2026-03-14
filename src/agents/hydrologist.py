@@ -53,13 +53,20 @@ def run_hydrologist(
     """Run sql_lineage and dag_config_parser; merge into kg.lineage_graph (single DiGraph)."""
     repo_root = Path(repo_root)
     sql_files, yaml_files, dag_py_files = _collect_lineage_files(repo_root)
+    
+    logger.info("Hydrologist: found %d SQL files, %d YAML files, %d DAG Python files", len(sql_files), len(yaml_files), len(dag_py_files))
 
+    sql_deps_count = 0
     for rel in sql_files:
         try:
             deps_list = extract_lineage_from_file(str(repo_root), str(rel), dialect=sql_dialect)
         except Exception as e:
             logger.warning("sql_lineage failed for %s: %s", rel, e)
             continue
+        if not deps_list:
+            logger.debug("No dependencies extracted from %s", rel)
+            continue
+        sql_deps_count += len(deps_list)
         for d in deps_list:
             for t in d.get("source_tables", []):
                 kg.add_dataset_node(DatasetNode(name=t, storage_type="table"))
@@ -78,7 +85,10 @@ def run_hydrologist(
                 kg.add_consumes_edge(tid, src)
             for tgt in d.get("target_tables", []):
                 kg.add_produces_edge(tid, tgt)
-
+    
+    logger.info("Hydrologist: extracted %d SQL dependencies", sql_deps_count)
+    
+    yaml_deps_count = 0
     for rel in yaml_files:
         try:
             out = analyze_dag_config(repo_root, rel)
@@ -86,23 +96,43 @@ def run_hydrologist(
             logger.warning("dag_config failed for %s: %s", rel, e)
             continue
         config_file = out.get("config_file", str(rel))
-        for m in out.get("models", []):
+        models = out.get("models", [])
+        topology = out.get("topology", [])
+        if not models and not topology:
+            logger.debug("No models or topology found in %s", rel)
+            continue
+        yaml_deps_count += len(models) + len(topology)
+        for m in models:
             kg.add_dataset_node(DatasetNode(name=m, storage_type="table"))
-        for up, down in out.get("topology", []):
+        for up, down in topology:
             kg.add_dataset_node(DatasetNode(name=up, storage_type="table"))
             kg.add_dataset_node(DatasetNode(name=down, storage_type="table"))
             kg.add_configures_edge(config_file, down)
-
+    
+    logger.info("Hydrologist: extracted %d YAML dependencies", yaml_deps_count)
+    
+    dag_deps_count = 0
     for rel in dag_py_files:
         try:
             out = analyze_dag_config(repo_root, rel)
         except Exception as e:
             logger.warning("dag_config failed for %s: %s", rel, e)
             continue
-        for tid in out.get("task_ids", []):
+        task_ids = out.get("task_ids", [])
+        topology = out.get("topology", [])
+        if not task_ids and not topology:
+            logger.debug("No task_ids or topology found in %s", rel)
+            continue
+        dag_deps_count += len(task_ids) + len(topology)
+        for tid in task_ids:
             kg.add_dataset_node(DatasetNode(name=tid, storage_type="table"))  # treat task as node
-        for up, down in out.get("topology", []):
+        for up, down in topology:
             kg.add_configures_edge(out.get("config_file", str(rel)), down)
+    
+    logger.info("Hydrologist: extracted %d DAG Python dependencies", dag_deps_count)
+    total_nodes = kg.lineage_graph.number_of_nodes()
+    total_edges = kg.lineage_graph.number_of_edges()
+    logger.info("Hydrologist: lineage graph has %d nodes, %d edges", total_nodes, total_edges)
 
 
 def blast_radius(kg: KnowledgeGraph, node_id: str) -> list[tuple[str, Optional[str], Optional[tuple[int, int]]]]:

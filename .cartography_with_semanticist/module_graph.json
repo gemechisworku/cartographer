@@ -1,0 +1,1741 @@
+{
+  "directed": true,
+  "multigraph": false,
+  "graph": {},
+  "nodes": [
+    {
+      "qualified_name": "src/cli.py::main",
+      "parent_module": "src/cli.py",
+      "signature": "()",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/cli.py::main"
+    },
+    {
+      "path": "src/cli.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 47
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/cli.py"
+    },
+    {
+      "id": "argparse"
+    },
+    {
+      "id": "logging"
+    },
+    {
+      "id": "sys"
+    },
+    {
+      "id": "pathlib"
+    },
+    {
+      "id": "src.orchestrator"
+    },
+    {
+      "qualified_name": "src/orchestrator.py::resolve_repo_path",
+      "parent_module": "src/orchestrator.py",
+      "signature": "(path_or_url: str)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/orchestrator.py::resolve_repo_path"
+    },
+    {
+      "qualified_name": "src/orchestrator.py::run_analysis",
+      "parent_module": "src/orchestrator.py",
+      "signature": "(\r\n    repo_path: str | Path,\r\n    output_dir: str | Path | None = None,\r\n    *,\r\n    days_velocity: int = 30,\r\n    sql_dialect: str = \"postgres\",\r\n    run_semanticist_agent: bool = True,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/orchestrator.py::run_analysis"
+    },
+    {
+      "path": "src/orchestrator.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 87
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/orchestrator.py"
+    },
+    {
+      "id": "json"
+    },
+    {
+      "id": "os"
+    },
+    {
+      "id": "shutil"
+    },
+    {
+      "id": "subprocess"
+    },
+    {
+      "id": "tempfile"
+    },
+    {
+      "id": "urllib.parse"
+    },
+    {
+      "id": "src.agents.hydrologist"
+    },
+    {
+      "id": "src.agents.semanticist"
+    },
+    {
+      "id": "src.agents.surveyor"
+    },
+    {
+      "id": "src.graph.knowledge_graph"
+    },
+    {
+      "path": "src/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/__init__.py"
+    },
+    {
+      "path": "tests/conftest.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 6
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/conftest.py"
+    },
+    {
+      "path": "tests/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/__init__.py"
+    },
+    {
+      "qualified_name": "src/agents/hydrologist.py::run_hydrologist",
+      "parent_module": "src/agents/hydrologist.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    kg: KnowledgeGraph,\r\n    *,\r\n    sql_dialect: str = \"postgres\",\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/hydrologist.py::run_hydrologist"
+    },
+    {
+      "qualified_name": "src/agents/hydrologist.py::blast_radius",
+      "parent_module": "src/agents/hydrologist.py",
+      "signature": "(kg: KnowledgeGraph, node_id: str)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/hydrologist.py::blast_radius"
+    },
+    {
+      "qualified_name": "src/agents/hydrologist.py::find_sources",
+      "parent_module": "src/agents/hydrologist.py",
+      "signature": "(kg: KnowledgeGraph)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/hydrologist.py::find_sources"
+    },
+    {
+      "qualified_name": "src/agents/hydrologist.py::find_sinks",
+      "parent_module": "src/agents/hydrologist.py",
+      "signature": "(kg: KnowledgeGraph)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/hydrologist.py::find_sinks"
+    },
+    {
+      "path": "src/agents/hydrologist.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 146
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/agents/hydrologist.py"
+    },
+    {
+      "id": "typing"
+    },
+    {
+      "id": "src.analyzers.dag_config_parser"
+    },
+    {
+      "id": "src.analyzers.sql_lineage"
+    },
+    {
+      "id": "src.models.nodes"
+    },
+    {
+      "qualified_name": "src/agents/semanticist.py::generate_purpose_statement",
+      "parent_module": "src/agents/semanticist.py",
+      "signature": "(\r\n    repo_root: Path,\r\n    module_path: str,\r\n    code: str,\r\n    language: str,\r\n    llm_completion: Callable[[str, str, int], str],\r\n    budget: ContextWindowBudget,\r\n    *,\r\n    model: str = \"gpt-4o-mini\",\r\n    max_tokens: int = 300,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/semanticist.py::generate_purpose_statement"
+    },
+    {
+      "qualified_name": "src/agents/semanticist.py::cluster_into_domains",
+      "parent_module": "src/agents/semanticist.py",
+      "signature": "(\r\n    kg: KnowledgeGraph,\r\n    embed_fn: Callable[[list[str]], list[list[float]]],\r\n    *,\r\n    k: int = 6,\r\n    label_fn: Optional[Callable[[list[str], str], str]] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/semanticist.py::cluster_into_domains"
+    },
+    {
+      "qualified_name": "src/agents/semanticist.py::answer_day_one_questions",
+      "parent_module": "src/agents/semanticist.py",
+      "signature": "(\r\n    kg: KnowledgeGraph,\r\n    llm_completion: Callable[[str, str, int], str],\r\n    budget: ContextWindowBudget,\r\n    *,\r\n    model: str = \"gpt-4o\",\r\n    max_tokens: int = 2000,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/semanticist.py::answer_day_one_questions"
+    },
+    {
+      "qualified_name": "src/agents/semanticist.py::run_semanticist",
+      "parent_module": "src/agents/semanticist.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    kg: KnowledgeGraph,\r\n    *,\r\n    token_budget: int = DEFAULT_TOKEN_BUDGET,\r\n    llm_completion: Optional[Callable[[str, str, int], str]] = None,\r\n    embed_fn: Optional[Callable[[list[str]], list[list[float]]]] = None,\r\n    purpose_model: str = \"gpt-4o-mini\",\r\n    synthesis_model: str = \"gpt-4o\",\r\n    skip_purpose: bool = False,\r\n    skip_cluster: bool = False,\r\n    skip_day_one: bool = False,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/semanticist.py::run_semanticist"
+    },
+    {
+      "qualified_name": "src/agents/semanticist.py::ContextWindowBudget",
+      "parent_module": "src/agents/semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/semanticist.py::ContextWindowBudget"
+    },
+    {
+      "path": "src/agents/semanticist.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 380
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/agents/semanticist.py"
+    },
+    {
+      "id": "ast"
+    },
+    {
+      "id": "scipy.cluster.vq"
+    },
+    {
+      "id": "openai"
+    },
+    {
+      "id": "hashlib"
+    },
+    {
+      "qualified_name": "src/agents/surveyor.py::analyze_module",
+      "parent_module": "src/agents/surveyor.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    file_path: str | Path,\r\n    kg: Optional[KnowledgeGraph] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/surveyor.py::analyze_module"
+    },
+    {
+      "qualified_name": "src/agents/surveyor.py::extract_git_velocity",
+      "parent_module": "src/agents/surveyor.py",
+      "signature": "(repo_root: str | Path, days: int = 30)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/surveyor.py::extract_git_velocity"
+    },
+    {
+      "qualified_name": "src/agents/surveyor.py::run_surveyor",
+      "parent_module": "src/agents/surveyor.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    kg: KnowledgeGraph,\r\n    *,\r\n    days_velocity: int = 30,\r\n    file_extensions: Optional[set[str]] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/agents/surveyor.py::run_surveyor"
+    },
+    {
+      "path": "src/agents/surveyor.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 200
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/agents/surveyor.py"
+    },
+    {
+      "id": "src.analyzers.tree_sitter_analyzer"
+    },
+    {
+      "path": "src/agents/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/agents/__init__.py"
+    },
+    {
+      "qualified_name": "src/analyzers/dag_config_parser.py::parse_dbt_schema_yml",
+      "parent_module": "src/analyzers/dag_config_parser.py",
+      "signature": "(content: str, file_path: str = \"\")",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/dag_config_parser.py::parse_dbt_schema_yml"
+    },
+    {
+      "qualified_name": "src/analyzers/dag_config_parser.py::parse_airflow_dag_python",
+      "parent_module": "src/analyzers/dag_config_parser.py",
+      "signature": "(content: str, file_path: str = \"\")",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/dag_config_parser.py::parse_airflow_dag_python"
+    },
+    {
+      "qualified_name": "src/analyzers/dag_config_parser.py::analyze_dag_config",
+      "parent_module": "src/analyzers/dag_config_parser.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    file_path: str | Path,\r\n    content: Optional[str] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/dag_config_parser.py::analyze_dag_config"
+    },
+    {
+      "path": "src/analyzers/dag_config_parser.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 118
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/analyzers/dag_config_parser.py"
+    },
+    {
+      "id": "re"
+    },
+    {
+      "id": "yaml"
+    },
+    {
+      "qualified_name": "src/analyzers/sql_lineage.py::extract_table_dependencies",
+      "parent_module": "src/analyzers/sql_lineage.py",
+      "signature": "(\r\n    source_sql: str,\r\n    file_path: str = \"\",\r\n    dialect: Optional[DialectHint] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/sql_lineage.py::extract_table_dependencies"
+    },
+    {
+      "qualified_name": "src/analyzers/sql_lineage.py::extract_lineage_from_file",
+      "parent_module": "src/analyzers/sql_lineage.py",
+      "signature": "(\r\n    repo_root: str,\r\n    file_path: str,\r\n    source_text: Optional[str] = None,\r\n    dialect: Optional[DialectHint] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/sql_lineage.py::extract_lineage_from_file"
+    },
+    {
+      "path": "src/analyzers/sql_lineage.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 129
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/analyzers/sql_lineage.py"
+    },
+    {
+      "id": "sqlglot"
+    },
+    {
+      "id": "sqlglot.dialects"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::get_language_for_path",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(file_path: str | Path)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::get_language_for_path"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::get_language_for_extension",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(ext: str)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::get_language_for_extension"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::parse_file",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    file_path: str | Path,\r\n    source_bytes: Optional[bytes] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::parse_file"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::extract_python_imports",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(source: bytes, tree: Tree, file_path: str)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::extract_python_imports"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::extract_python_functions_and_classes",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(\r\n    source: bytes, tree: Tree, file_path: str\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::extract_python_functions_and_classes"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::extract_js_imports",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(source: bytes, tree: Tree, file_path: str)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::extract_js_imports"
+    },
+    {
+      "qualified_name": "src/analyzers/tree_sitter_analyzer.py::analyze_module",
+      "parent_module": "src/analyzers/tree_sitter_analyzer.py",
+      "signature": "(\r\n    repo_root: str | Path,\r\n    file_path: str | Path,\r\n    source_bytes: Optional[bytes] = None,\r\n)",
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/analyzers/tree_sitter_analyzer.py::analyze_module"
+    },
+    {
+      "path": "src/analyzers/tree_sitter_analyzer.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 257
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/analyzers/tree_sitter_analyzer.py"
+    },
+    {
+      "id": "tree_sitter_python"
+    },
+    {
+      "id": "tree_sitter"
+    },
+    {
+      "id": "tree_sitter_yaml"
+    },
+    {
+      "id": "tree_sitter_javascript"
+    },
+    {
+      "path": "src/analyzers/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/analyzers/__init__.py"
+    },
+    {
+      "qualified_name": "src/graph/knowledge_graph.py::KnowledgeGraph",
+      "parent_module": "src/graph/knowledge_graph.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/graph/knowledge_graph.py::KnowledgeGraph"
+    },
+    {
+      "path": "src/graph/knowledge_graph.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 137
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/graph/knowledge_graph.py"
+    },
+    {
+      "id": "src.models.edges"
+    },
+    {
+      "path": "src/graph/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/graph/__init__.py"
+    },
+    {
+      "qualified_name": "src/models/edges.py::EdgeType",
+      "parent_module": "src/models/edges.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/edges.py::EdgeType"
+    },
+    {
+      "qualified_name": "src/models/edges.py::EdgePayload",
+      "parent_module": "src/models/edges.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/edges.py::EdgePayload"
+    },
+    {
+      "path": "src/models/edges.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 27
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/models/edges.py"
+    },
+    {
+      "id": "enum"
+    },
+    {
+      "id": "pydantic"
+    },
+    {
+      "qualified_name": "src/models/nodes.py::ModuleNode",
+      "parent_module": "src/models/nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/nodes.py::ModuleNode"
+    },
+    {
+      "qualified_name": "src/models/nodes.py::DatasetNode",
+      "parent_module": "src/models/nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/nodes.py::DatasetNode"
+    },
+    {
+      "qualified_name": "src/models/nodes.py::FunctionNode",
+      "parent_module": "src/models/nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/nodes.py::FunctionNode"
+    },
+    {
+      "qualified_name": "src/models/nodes.py::TransformationNode",
+      "parent_module": "src/models/nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "src/models/nodes.py::TransformationNode"
+    },
+    {
+      "path": "src/models/nodes.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 86
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/models/nodes.py"
+    },
+    {
+      "id": "datetime"
+    },
+    {
+      "path": "src/models/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 19
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "src/models/__init__.py"
+    },
+    {
+      "path": "tests/unit/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/__init__.py"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_hydrologist.py::TestRunHydrologist",
+      "parent_module": "tests/unit/agents/test_hydrologist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_hydrologist.py::TestRunHydrologist"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_hydrologist.py::TestBlastRadius",
+      "parent_module": "tests/unit/agents/test_hydrologist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_hydrologist.py::TestBlastRadius"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_hydrologist.py::TestFindSourcesAndSinks",
+      "parent_module": "tests/unit/agents/test_hydrologist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_hydrologist.py::TestFindSourcesAndSinks"
+    },
+    {
+      "path": "tests/unit/agents/test_hydrologist.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 65
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/agents/test_hydrologist.py"
+    },
+    {
+      "id": "pytest"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_semanticist.py::TestContextWindowBudget",
+      "parent_module": "tests/unit/agents/test_semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_semanticist.py::TestContextWindowBudget"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_semanticist.py::TestGeneratePurposeStatement",
+      "parent_module": "tests/unit/agents/test_semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_semanticist.py::TestGeneratePurposeStatement"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_semanticist.py::TestClusterIntoDomains",
+      "parent_module": "tests/unit/agents/test_semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_semanticist.py::TestClusterIntoDomains"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_semanticist.py::TestAnswerDayOneQuestions",
+      "parent_module": "tests/unit/agents/test_semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_semanticist.py::TestAnswerDayOneQuestions"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_semanticist.py::TestRunSemanticist",
+      "parent_module": "tests/unit/agents/test_semanticist.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_semanticist.py::TestRunSemanticist"
+    },
+    {
+      "path": "tests/unit/agents/test_semanticist.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 173
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/agents/test_semanticist.py"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_surveyor.py::TestAnalyzeModule",
+      "parent_module": "tests/unit/agents/test_surveyor.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_surveyor.py::TestAnalyzeModule"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_surveyor.py::TestExtractGitVelocity",
+      "parent_module": "tests/unit/agents/test_surveyor.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_surveyor.py::TestExtractGitVelocity"
+    },
+    {
+      "qualified_name": "tests/unit/agents/test_surveyor.py::TestRunSurveyor",
+      "parent_module": "tests/unit/agents/test_surveyor.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/agents/test_surveyor.py::TestRunSurveyor"
+    },
+    {
+      "path": "tests/unit/agents/test_surveyor.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 53
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/agents/test_surveyor.py"
+    },
+    {
+      "path": "tests/unit/agents/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/agents/__init__.py"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_dag_config_parser.py::TestParseDbtSchemaYml",
+      "parent_module": "tests/unit/analyzers/test_dag_config_parser.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_dag_config_parser.py::TestParseDbtSchemaYml"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_dag_config_parser.py::TestParseAirflowDagPython",
+      "parent_module": "tests/unit/analyzers/test_dag_config_parser.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_dag_config_parser.py::TestParseAirflowDagPython"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_dag_config_parser.py::TestAnalyzeDagConfig",
+      "parent_module": "tests/unit/analyzers/test_dag_config_parser.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_dag_config_parser.py::TestAnalyzeDagConfig"
+    },
+    {
+      "path": "tests/unit/analyzers/test_dag_config_parser.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 74
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/analyzers/test_dag_config_parser.py"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_sql_lineage.py::TestExtractTableDependencies",
+      "parent_module": "tests/unit/analyzers/test_sql_lineage.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_sql_lineage.py::TestExtractTableDependencies"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_sql_lineage.py::TestExtractLineageFromFile",
+      "parent_module": "tests/unit/analyzers/test_sql_lineage.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_sql_lineage.py::TestExtractLineageFromFile"
+    },
+    {
+      "path": "tests/unit/analyzers/test_sql_lineage.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 64
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/analyzers/test_sql_lineage.py"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestLanguageRouter",
+      "parent_module": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestLanguageRouter"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestParseFile",
+      "parent_module": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestParseFile"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestAnalyzeModulePython",
+      "parent_module": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestAnalyzeModulePython"
+    },
+    {
+      "qualified_name": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestAnalyzeModuleJavaScript",
+      "parent_module": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/analyzers/test_tree_sitter_analyzer.py::TestAnalyzeModuleJavaScript"
+    },
+    {
+      "path": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 111
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/analyzers/test_tree_sitter_analyzer.py"
+    },
+    {
+      "path": "tests/unit/analyzers/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/analyzers/__init__.py"
+    },
+    {
+      "qualified_name": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphModuleGraph",
+      "parent_module": "tests/unit/graph/test_knowledge_graph.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphModuleGraph"
+    },
+    {
+      "qualified_name": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphLineageGraph",
+      "parent_module": "tests/unit/graph/test_knowledge_graph.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphLineageGraph"
+    },
+    {
+      "qualified_name": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphSerialization",
+      "parent_module": "tests/unit/graph/test_knowledge_graph.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/graph/test_knowledge_graph.py::TestKnowledgeGraphSerialization"
+    },
+    {
+      "path": "tests/unit/graph/test_knowledge_graph.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 106
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/graph/test_knowledge_graph.py"
+    },
+    {
+      "path": "tests/unit/graph/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/graph/__init__.py"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_edges.py::TestEdgeType",
+      "parent_module": "tests/unit/models/test_edges.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_edges.py::TestEdgeType"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_edges.py::TestEdgePayload",
+      "parent_module": "tests/unit/models/test_edges.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_edges.py::TestEdgePayload"
+    },
+    {
+      "path": "tests/unit/models/test_edges.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 46
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/models/test_edges.py"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_nodes.py::TestModuleNode",
+      "parent_module": "tests/unit/models/test_nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_nodes.py::TestModuleNode"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_nodes.py::TestDatasetNode",
+      "parent_module": "tests/unit/models/test_nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_nodes.py::TestDatasetNode"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_nodes.py::TestFunctionNode",
+      "parent_module": "tests/unit/models/test_nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_nodes.py::TestFunctionNode"
+    },
+    {
+      "qualified_name": "tests/unit/models/test_nodes.py::TestTransformationNode",
+      "parent_module": "tests/unit/models/test_nodes.py",
+      "signature": null,
+      "purpose_statement": null,
+      "call_count_within_repo": 0,
+      "is_public_api": true,
+      "id": "tests/unit/models/test_nodes.py::TestTransformationNode"
+    },
+    {
+      "path": "tests/unit/models/test_nodes.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 139
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": false,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/models/test_nodes.py"
+    },
+    {
+      "path": "tests/unit/models/__init__.py",
+      "language": "python",
+      "purpose_statement": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "domain_cluster": "[Purpose/synthesis skipped: no OPENAI_API_KEY or OPENROUTER_API_KEY set]",
+      "complexity_score": {
+        "lines": 2
+      },
+      "change_velocity_30d": null,
+      "is_dead_code_candidate": true,
+      "last_modified": null,
+      "pagerank": 0.03125,
+      "id": "tests/unit/models/__init__.py"
+    }
+  ],
+  "edges": [
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/cli.py",
+      "target": "argparse"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/cli.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/cli.py",
+      "target": "sys"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/cli.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/cli.py",
+      "target": "src.orchestrator"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "json"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "os"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "shutil"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "subprocess"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "tempfile"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "urllib.parse"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "src.agents.hydrologist"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "src.agents.semanticist"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "src.agents.surveyor"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/orchestrator.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "src.analyzers.dag_config_parser"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "src.analyzers.sql_lineage"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/hydrologist.py",
+      "target": "src.models.nodes"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "ast"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "os"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "scipy.cluster.vq"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "src.agents.hydrologist"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "openai"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/semanticist.py",
+      "target": "hashlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "subprocess"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "src.analyzers.tree_sitter_analyzer"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/agents/surveyor.py",
+      "target": "src.models.nodes"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/dag_config_parser.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/dag_config_parser.py",
+      "target": "re"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/dag_config_parser.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/dag_config_parser.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/dag_config_parser.py",
+      "target": "yaml"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/sql_lineage.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/sql_lineage.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/sql_lineage.py",
+      "target": "sqlglot"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/sql_lineage.py",
+      "target": "sqlglot.dialects"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/sql_lineage.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "tree_sitter_python"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "tree_sitter"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "tree_sitter_yaml"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/analyzers/tree_sitter_analyzer.py",
+      "target": "tree_sitter_javascript"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "json"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "logging"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "src.models.edges"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/graph/knowledge_graph.py",
+      "target": "src.models.nodes"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/edges.py",
+      "target": "enum"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/edges.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/edges.py",
+      "target": "pydantic"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/nodes.py",
+      "target": "datetime"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/nodes.py",
+      "target": "typing"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/nodes.py",
+      "target": "pydantic"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/__init__.py",
+      "target": "src.models.nodes"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "src/models/__init__.py",
+      "target": "src.models.edges"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_hydrologist.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_hydrologist.py",
+      "target": "src.agents.hydrologist"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_hydrologist.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_semanticist.py",
+      "target": "src.agents.semanticist"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_semanticist.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_semanticist.py",
+      "target": "hashlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_surveyor.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_surveyor.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_surveyor.py",
+      "target": "src.agents.surveyor"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_surveyor.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/agents/test_surveyor.py",
+      "target": "subprocess"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_dag_config_parser.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_dag_config_parser.py",
+      "target": "src.analyzers.dag_config_parser"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_sql_lineage.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_sql_lineage.py",
+      "target": "src.analyzers.sql_lineage"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/analyzers/test_tree_sitter_analyzer.py",
+      "target": "src.analyzers.tree_sitter_analyzer"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "json"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "tempfile"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "pathlib"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "src.graph.knowledge_graph"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "src.models.nodes"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/graph/test_knowledge_graph.py",
+      "target": "src.models.edges"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/models/test_edges.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/models/test_edges.py",
+      "target": "src.models.edges"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/models/test_nodes.py",
+      "target": "pytest"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/models/test_nodes.py",
+      "target": "pydantic"
+    },
+    {
+      "edge_type": "IMPORTS",
+      "weight": 1.0,
+      "source": "tests/unit/models/test_nodes.py",
+      "target": "src.models.nodes"
+    }
+  ]
+}

@@ -25,6 +25,8 @@ DAY_ONE_QUESTIONS = [
 
 # Default token budget for LLM calls (approximate)
 DEFAULT_TOKEN_BUDGET = 500_000
+# Reserve minimum budget for Day-One answers (context + response tokens)
+MIN_DAY_ONE_BUDGET = 50_000
 CHARS_PER_TOKEN = 4
 
 
@@ -123,8 +125,15 @@ def _contradicts(docstring: str, purpose: str) -> bool:
     """Heuristic: true if docstring and purpose seem to describe different things (simple keyword overlap check)."""
     a = set(docstring.lower().split())
     b = set(purpose.lower().split())
+    # Remove common stopwords that don't indicate semantic similarity
+    stopwords = {"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by", "is", "are", "was", "were", "be", "been", "being", "have", "has", "had", "do", "does", "did", "will", "would", "should", "could", "may", "might", "must", "can", "this", "that", "these", "those", "it", "its", "they", "them", "their"}
+    a = a - stopwords
+    b = b - stopwords
+    if not a or not b:
+        return False
     overlap = len(a & b) / max(1, min(len(a), len(b)))
-    return overlap < 0.2 and len(a) > 5 and len(b) > 5
+    # More lenient threshold: < 30% overlap and both have meaningful content (> 3 words after stopword removal)
+    return overlap < 0.3 and len(a) > 3 and len(b) > 3
 
 
 def cluster_into_domains(
@@ -231,7 +240,7 @@ def answer_day_one_questions(
     context = _build_synthesis_context(kg)
     estimated = budget.estimate_tokens(context) + max_tokens
     if budget.would_exceed(estimated):
-        logger.warning("Budget exceeded for Day-One synthesis")
+        logger.warning("Budget exceeded for Day-One synthesis (remaining: %d, needed: %d)", budget.remaining(), estimated)
         return [{"question": q, "answer": "Skipped (budget).", "citations": []} for q in DAY_ONE_QUESTIONS]
     prompt = f"""You are summarizing a codebase for a new engineer (Day-One brief). Use ONLY the following context. For each of the five questions, give a short answer and cite evidence (file path and line range or module name when available). Format each answer as: "ANSWER: ..." then "CITATIONS: file:line or module name, ..."
 
@@ -333,7 +342,10 @@ def run_semanticist(
     Returns (day_one_answers, documentation_drift_list).
     """
     repo_root = Path(repo_root)
-    budget = ContextWindowBudget(limit=token_budget)
+    # Reserve minimum budget for Day-One answers to ensure they can always run
+    # Purpose statements can use the remaining budget
+    available_budget = token_budget - (MIN_DAY_ONE_BUDGET if not skip_day_one else 0)
+    budget = ContextWindowBudget(limit=available_budget)
     llm = llm_completion or _default_llm_completion
     embed = embed_fn or _default_embed
     drift_list: list[tuple[str, str]] = []
@@ -341,6 +353,9 @@ def run_semanticist(
     # 1) Purpose statements for each module (file) node
     if not skip_purpose:
         module_paths = [n for n in kg.module_graph.nodes() if kg.module_graph.nodes[n].get("path") == n]
+        purpose_candidates = [p for p in module_paths if kg.module_graph.nodes[p].get("language") in ("python", "javascript", "typescript")]
+        logger.info("Semanticist: generating purpose statements for %d modules (LLM)...", len(purpose_candidates))
+        done = 0
         for path in module_paths:
             lang = kg.module_graph.nodes[path].get("language", "python")
             if lang not in ("python", "javascript", "typescript"):
@@ -357,9 +372,15 @@ def run_semanticist(
             if drift:
                 docstring = _get_module_docstring(code, lang)
                 drift_list.append((path, docstring or ""))
+            done += 1
+            if done % 5 == 0:
+                logger.info("Semanticist: purpose statements — %d modules done.", done)
+        if purpose_candidates:
+            logger.info("Semanticist: purpose statements done (%d modules).", done)
 
     # 2) Domain clustering
     if not skip_cluster:
+        logger.info("Semanticist: clustering modules into domains (embed + k-means)...")
         def _label_cluster(sample_purposes: list[str], cid: str) -> str:
             if not sample_purposes:
                 return cid
@@ -372,8 +393,17 @@ def run_semanticist(
             except Exception:
                 return cid
         cluster_into_domains(kg, embed, k=6, label_fn=_label_cluster)
+        logger.info("Semanticist: domain clustering done.")
 
     # 3) Day-One answers
-    day_one = answer_day_one_questions(kg, llm, budget, model=synthesis_model) if not skip_day_one else [{"question": q, "answer": "(skipped)", "citations": []} for q in DAY_ONE_QUESTIONS]
+    # Create a fresh budget for Day-One answers using the reserved amount
+    if not skip_day_one:
+        logger.info("Semanticist: generating Day-One answers (5 questions, synthesis LLM)...")
+        # Day-One answers get their reserved budget (MIN_DAY_ONE_BUDGET)
+        # plus any remaining from purpose statements
+        day_one_budget = ContextWindowBudget(limit=MIN_DAY_ONE_BUDGET + budget.remaining())
+        day_one = answer_day_one_questions(kg, llm, day_one_budget, model=synthesis_model)
+    else:
+        day_one = [{"question": q, "answer": "(skipped)", "citations": []} for q in DAY_ONE_QUESTIONS]
 
     return day_one, drift_list

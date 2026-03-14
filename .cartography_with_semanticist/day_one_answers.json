@@ -1,0 +1,27 @@
+[
+  {
+    "question": "What is the primary data ingestion path?",
+    "answer": "(no answer generated)",
+    "citations": []
+  },
+  {
+    "question": "What are the 3\u20135 most critical output datasets/endpoints?",
+    "answer": "(no answer generated)",
+    "citations": []
+  },
+  {
+    "question": "What is the blast radius if the most critical module fails?",
+    "answer": "(no answer generated)",
+    "citations": []
+  },
+  {
+    "question": "Where is the business logic concentrated vs. distributed?",
+    "answer": "(no answer generated)",
+    "citations": []
+  },
+  {
+    "question": "What has changed most frequently in the last 90 days (git velocity map)?",
+    "answer": "(no answer generated)",
+    "citations": []
+  }
+]
