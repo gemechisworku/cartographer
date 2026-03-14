@@ -134,3 +134,39 @@ class KnowledgeGraph:
         path = Path(path)
         data = json.loads(path.read_text(encoding="utf-8"))
         self.load_lineage_graph_from_dict(data)
+
+    def remove_modules(self, paths: set[str]) -> None:
+        """Remove module nodes and their function nodes / IMPORTS edges for incremental update.
+        paths: set of module path strings (e.g. {'src/cli.py', 'src/orchestrator.py'}).
+        """
+        paths_n = {p.replace("\\", "/") for p in paths}
+        to_remove: set[str] = set()
+        for nid in list(self._module_graph.nodes()):
+            data = self._module_graph.nodes.get(nid, {})
+            path_val = (data.get("path") or data.get("id") or nid).replace("\\", "/")
+            if path_val in paths_n:
+                to_remove.add(nid)
+            elif data.get("parent_module", "").replace("\\", "/") in paths_n:
+                to_remove.add(nid)
+        for nid in to_remove:
+            self._module_graph.remove_node(nid)
+        logger.debug("Removed %d nodes from module graph (paths: %s)", len(to_remove), paths_n)
+
+    def remove_lineage_transformations_by_source_files(self, source_files: set[str]) -> None:
+        """Remove transformation nodes (and CONFIGURES edges from) whose source_file is in source_files.
+        Used for incremental update before re-running Hydrologist on changed files.
+        """
+        source_files_n = {f.replace("\\", "/") for f in source_files}
+        to_remove: list[str] = []
+        for nid in list(self._lineage_graph.nodes()):
+            data = self._lineage_graph.nodes.get(nid, {})
+            sf = (data.get("source_file") or "").replace("\\", "/")
+            if sf in source_files_n:
+                to_remove.append(nid)
+        for nid in to_remove:
+            self._lineage_graph.remove_node(nid)
+        # Remove CONFIGURES edges where config_file (source u) is in source_files
+        for u, v in list(self._lineage_graph.edges()):
+            if self._lineage_graph.edges[u, v].get("edge_type") == "CONFIGURES" and u.replace("\\", "/") in source_files_n:
+                self._lineage_graph.remove_edge(u, v)
+        logger.debug("Removed %d lineage nodes for source_files: %s", len(to_remove), source_files_n)

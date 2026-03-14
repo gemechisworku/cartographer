@@ -336,8 +336,10 @@ def run_semanticist(
     skip_purpose: bool = False,
     skip_cluster: bool = False,
     skip_day_one: bool = False,
+    module_paths_filter: Optional[set[str]] = None,
 ) -> tuple[list[dict[str, Any]], list[tuple[str, str]]]:
     """Run Semanticist: purpose statements, domain clustering, Day-One answers. Updates kg in place.
+    If module_paths_filter is set, only generate purpose statements for those modules (incremental).
 
     Returns (day_one_answers, documentation_drift_list).
     """
@@ -349,12 +351,17 @@ def run_semanticist(
     llm = llm_completion or _default_llm_completion
     embed = embed_fn or _default_embed
     drift_list: list[tuple[str, str]] = []
+    filter_set = {p.replace("\\", "/") for p in (module_paths_filter or set())}
 
     # 1) Purpose statements for each module (file) node
     if not skip_purpose:
         module_paths = [n for n in kg.module_graph.nodes() if kg.module_graph.nodes[n].get("path") == n]
+        if filter_set:
+            module_paths = [p for p in module_paths if p.replace("\\", "/") in filter_set]
+            logger.info("Semanticist: incremental purpose for %d modules (LLM)...", len(module_paths))
         purpose_candidates = [p for p in module_paths if kg.module_graph.nodes[p].get("language") in ("python", "javascript", "typescript")]
-        logger.info("Semanticist: generating purpose statements for %d modules (LLM)...", len(purpose_candidates))
+        if not filter_set:
+            logger.info("Semanticist: generating purpose statements for %d modules (LLM)...", len(purpose_candidates))
         done = 0
         for path in module_paths:
             lang = kg.module_graph.nodes[path].get("language", "python")

@@ -24,6 +24,7 @@ def main() -> None:
     analyze_p.add_argument("--days", type=int, default=30, help="Days for git velocity (default: 30)")
     analyze_p.add_argument("--sql-dialect", default="postgres", choices=["postgres", "bigquery", "snowflake", "duckdb"])
     analyze_p.add_argument("--no-semanticist", action="store_true", help="Skip Semanticist (no purpose/domain/Day-One; faster, no LLM)")
+    analyze_p.add_argument("--incremental", action="store_true", help="Re-analyze only files changed since last run (requires prior full run)")
 
     query_p = subparsers.add_parser("query", help="Interactive query mode (Navigator) on existing .cartography/")
     query_p.add_argument("target", help="Repo path (to use <repo>/.cartography) or path to .cartography directory")
@@ -45,6 +46,7 @@ def main() -> None:
                 days_velocity=args.days,
                 sql_dialect=args.sql_dialect,
                 run_semanticist_agent=not args.no_semanticist,
+                incremental=args.incremental,
             )
             print("Analysis complete. Outputs in", repo_path / ".cartography" if not args.output_dir else args.output_dir)
         except Exception as e:

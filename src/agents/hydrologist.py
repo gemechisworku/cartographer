@@ -49,12 +49,23 @@ def run_hydrologist(
     kg: KnowledgeGraph,
     *,
     sql_dialect: str = "postgres",
+    file_list: Optional[list[str]] = None,
 ) -> None:
-    """Run sql_lineage and dag_config_parser; merge into kg.lineage_graph (single DiGraph)."""
+    """Run sql_lineage and dag_config_parser; merge into kg.lineage_graph (single DiGraph).
+    If file_list is provided, only process those paths (for incremental update).
+    """
     repo_root = Path(repo_root)
     sql_files, yaml_files, dag_py_files = _collect_lineage_files(repo_root)
-    
-    logger.info("Hydrologist: found %d SQL files, %d YAML files, %d DAG Python files", len(sql_files), len(yaml_files), len(dag_py_files))
+    if file_list is not None:
+        file_list_set = {p.replace("\\", "/") for p in file_list}
+        def _in_list(rel: Path) -> bool:
+            return str(rel).replace("\\", "/") in file_list_set
+        sql_files = [f for f in sql_files if _in_list(f)]
+        yaml_files = [f for f in yaml_files if _in_list(f)]
+        dag_py_files = [f for f in dag_py_files if _in_list(f)]
+        logger.info("Hydrologist: incremental mode, %d SQL, %d YAML, %d DAG Python files", len(sql_files), len(yaml_files), len(dag_py_files))
+    else:
+        logger.info("Hydrologist: found %d SQL files, %d YAML files, %d DAG Python files", len(sql_files), len(yaml_files), len(dag_py_files))
 
     sql_deps_count = 0
     for rel in sql_files:

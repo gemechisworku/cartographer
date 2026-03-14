@@ -103,3 +103,40 @@ class TestKnowledgeGraphSerialization:
         kg2.load_lineage_graph_json(out_file)
         assert kg2.lineage_graph.number_of_nodes() == 1
         assert list(kg2.lineage_graph.nodes)[0] == "t"
+
+
+class TestKnowledgeGraphIncrementalRemoval:
+    """Tests for remove_modules and remove_lineage_transformations_by_source_files (incremental update)."""
+
+    def test_remove_modules_removes_module_and_function_nodes(self):
+        kg = KnowledgeGraph()
+        kg.add_module_node(ModuleNode(path="a.py", language="python"))
+        kg.add_module_node(ModuleNode(path="b.py", language="python"))
+        kg.add_function_node({"qualified_name": "a.py::foo", "parent_module": "a.py"})
+        kg.add_import_edge("a.py", "b.py")
+        assert kg.module_graph.number_of_nodes() == 3
+        kg.remove_modules({"a.py"})
+        assert not kg.module_graph.has_node("a.py")
+        assert not kg.module_graph.has_node("a.py::foo")
+        assert kg.module_graph.has_node("b.py")
+        assert kg.module_graph.number_of_nodes() == 1
+
+    def test_remove_lineage_transformations_by_source_files_removes_transformations(self):
+        kg = KnowledgeGraph()
+        kg.add_dataset_node(DatasetNode(name="raw", storage_type="table"))
+        kg.add_dataset_node(DatasetNode(name="clean", storage_type="table"))
+        tid = kg.add_transformation_node(
+            TransformationNode(
+                source_datasets=["raw"],
+                target_datasets=["clean"],
+                transformation_type="sql",
+                source_file="models/clean.sql",
+                line_range=(1, 10),
+            )
+        )
+        kg.add_consumes_edge(tid, "raw")
+        kg.add_produces_edge(tid, "clean")
+        assert kg.lineage_graph.number_of_nodes() == 3
+        kg.remove_lineage_transformations_by_source_files({"models/clean.sql"})
+        assert kg.lineage_graph.number_of_nodes() == 2  # datasets remain
+        assert not any(kg.lineage_graph.nodes[n].get("source_file") == "models/clean.sql" for n in kg.lineage_graph.nodes)

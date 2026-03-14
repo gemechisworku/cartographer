@@ -134,12 +134,19 @@ def run_surveyor(
     *,
     days_velocity: int = 30,
     file_extensions: Optional[set[str]] = None,
+    file_list: Optional[list[str]] = None,
 ) -> None:
-    """Build module import graph (DiGraph), run PageRank, attach git velocity, detect SCCs and dead-code candidates."""
+    """Build module import graph (DiGraph), run PageRank, attach git velocity, detect SCCs and dead-code candidates.
+    If file_list is provided, only analyze those paths (for incremental update); PageRank/SCC/dead-code still run on full graph.
+    """
     repo_root = Path(repo_root)
     if file_extensions is None:
         file_extensions = {".py", ".sql", ".yml", ".yaml", ".js", ".ts", ".tsx"}
     files = _discover_files(repo_root, file_extensions)
+    if file_list is not None:
+        file_list_set = {p.replace("\\", "/") for p in file_list}
+        files = [f for f in files if str(f).replace("\\", "/") in file_list_set]
+        logger.info("Surveyor: incremental mode, %d files to analyze", len(files))
     velocity_map = extract_git_velocity(repo_root, days=days_velocity)
 
     all_exported: set[str] = set()  # qualified_name of public functions/classes
