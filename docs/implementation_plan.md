@@ -109,16 +109,16 @@ Work in each phase is ordered so that dependencies (e.g. models before agents) a
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
-| 2.3.1 | **navigator.py:** LangGraph agent with four tools: find_implementation, trace_lineage, blast_radius, explain_module ([specs/agents/navigator.md](../specs/agents/navigator.md)). | src/agents/navigator.py | ⬜ |
-| 2.3.2 | **navigator.py:** Every answer cites evidence (file, line, analysis method: static vs LLM). | Same | ⬜ |
+| 2.3.1 | **navigator.py:** LangGraph agent with four tools: find_implementation, trace_lineage, blast_radius, explain_module ([specs/agents/navigator.md](../specs/agents/navigator.md)). | src/agents/navigator.py | ✅ |
+| 2.3.2 | **navigator.py:** Every answer cites evidence (file, line, analysis method: static vs LLM). | Same | ✅ |
 
 ### 2.4 Orchestrator and CLI (final scope)
 
 | # | Task | Output | Status |
 |---|------|--------|--------|
 | 2.4.1 | **orchestrator.py:** Full pipeline Surveyor → Hydrologist → Semanticist → Archivist; produce all .cartography/ artifacts. | src/orchestrator.py | ✅ |
-| 2.4.2 | **cli.py:** Subcommand `query` — load graph/artifacts, start Navigator interactive mode. | src/cli.py | ⬜ |
-| 2.4.3 | **README.md:** Document running against any GitHub URL; both `analyze` and `query` modes. | README.md | ⬜ |
+| 2.4.2 | **cli.py:** Subcommand `query` — load graph/artifacts, start Navigator interactive mode. | src/cli.py | ✅ |
+| 2.4.3 | **README.md:** Document running against any GitHub URL; both `analyze` and `query` modes. | README.md | ✅ |
 
 ### 2.5 Cartography artifacts and report (final)
 
